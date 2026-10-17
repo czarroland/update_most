@@ -19,9 +19,11 @@ import io
 import json
 import os
 from pathlib import Path, PurePosixPath
+import plistlib
 import re
 import shutil
 import struct
+import subprocess
 import sys
 import tempfile
 import time
@@ -73,6 +75,14 @@ def sha256(data: bytes) -> str:
 
 def file_sha(path: Path) -> str:
     digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def file_md5(path: Path) -> str:
+    digest = hashlib.md5()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
@@ -324,6 +334,36 @@ def readme_firmware_notes(repo: str, fetcher=None) -> list[str]:
     return notes[:8]
 
 
+def github_release_notes(source: dict, fetcher=None) -> tuple[str, str]:
+    """Return the selected author's release URL and a bounded notes excerpt."""
+    if source.get("type") != "github_release" or not REPO_RE.fullmatch(source.get("repo", "")):
+        raise UpdaterError("Release notes require a GitHub core source")
+    repo = source["repo"]
+    tag = source.get("tag")
+    endpoint = (f"https://api.github.com/repos/{repo}/releases/tags/{urllib.parse.quote(tag, safe='')}"
+                if tag else f"https://api.github.com/repos/{repo}/releases/latest")
+    fetcher = fetch if fetcher is None else fetcher
+    release = json.loads(fetcher(endpoint, 2 * 1024 * 1024, {"api.github.com"}))
+    url = release.get("html_url", "")
+    https_url(url, {"github.com"})
+    if not url.startswith(f"https://github.com/{repo}/releases/"):
+        raise UpdaterError("Unexpected release notes URL")
+    body = release.get("body")
+    if not isinstance(body, str):
+        body = "No release notes supplied by the core author."
+    return url, body[:4000] + ("\n[Notes truncated]" if len(body) > 4000 else "")
+
+
+def browse_cores(catalog: dict, hardware: str, channel: str,
+                 category: str = "") -> list[dict]:
+    """Return eligible core records grouped predictably for the terminal menu."""
+    return sorted((core for core in catalog["cores"] if core.get("enabled", True) and
+                   (channel == "beta" or core.get("channel", "stable") == "stable") and
+                   hardware in core.get("hardware", [hardware]) and
+                   (not category or core.get("category", "Other").casefold() == category.casefold())),
+                  key=lambda core: (core.get("category", "Other").casefold(), core["name"].casefold()))
+
+
 def firmware_version_key(value: str) -> tuple[int, int, int, int, int]:
     match = FIRMWARE_VERSION_RE.fullmatch(value.strip())
     if not match:
@@ -354,6 +394,8 @@ def firmware_compatibility(core: dict, notes: list[str], installed: str | None) 
     actual = firmware_version_key(installed)
     if floors and actual < max(floors):
         return f"Firmware incompatible: installed {installed}; known minimum {minimum}"
+    if any("custom" in requirement.casefold() for requirement in requirements):
+        return f"Firmware compatibility needs manual review: {installed} meets version {minimum}, but the core specifies custom firmware"
     if floors:
         return f"Firmware meets known minimum {minimum} by reported version: {installed}"
     return "Firmware compatibility needs manual review: " + "; ".join(requirements[:2])
@@ -519,11 +561,58 @@ def save_settings(sd: Path, settings: dict):
     atomic_write_bytes(root / "settings.json", (json.dumps(settings, indent=2, sort_keys=True) + "\n").encode("utf-8"))
 
 
+def mac_diskutil_plist(*args) -> dict | None:
+    """Read macOS disk metadata without changing the selected media."""
+    if sys.platform != "darwin":
+        return None
+    try:
+        result = subprocess.run(["diskutil", *args], capture_output=True, timeout=8, check=False)
+        if result.returncode or len(result.stdout) > 256 * 1024:
+            return None
+        doc = plistlib.loads(result.stdout)
+        return doc if isinstance(doc, dict) else None
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None
+
+
+def mac_card_info(sd: Path) -> dict | None:
+    """Describe a mounted macOS volume only when sd is exactly its mount point."""
+    volume = mac_diskutil_plist("info", "-plist", str(sd))
+    if not volume or volume.get("MountPoint") != str(sd):
+        return None
+    whole_id = volume.get("ParentWholeDisk", "")
+    if not isinstance(whole_id, str) or not re.fullmatch(r"disk\d+", whole_id):
+        return None
+    whole = mac_diskutil_plist("info", "-plist", whole_id)
+    if not whole:
+        return None
+    return {"filesystem": volume.get("Content"), "scheme": whole.get("Content"),
+            "removable": bool(volume.get("RemovableMediaOrExternalDevice")),
+            "size": volume.get("VolumeSize"), "free": volume.get("FreeSpace")}
+
+
+def card_format_issue(info: dict | None) -> str | None:
+    if info is None:
+        return None
+    if info["filesystem"] != "Windows_FAT_32" or info["scheme"] != "FDisk_partition_scheme":
+        return "Game Bub requires FAT32 on an MBR partition table; selected volume reports " + \
+               f"{info['filesystem']} on {info['scheme']}"
+    return None
+
+
 def detect_sd_cards() -> list[Path]:
     """Return plausible mounted cards; a person still chooses the destination."""
     roots = []
     if os.name == "nt":
         roots = [Path(f"{letter}:\\") for letter in "DEFGHIJKLMNOPQRSTUVWXYZ"]
+    elif sys.platform == "darwin":
+        disks = mac_diskutil_plist("list", "-plist", "external")
+        if disks:
+            roots = [Path(part["MountPoint"]) for disk in disks.get("AllDisksAndPartitions", [])
+                     for part in disk.get("Partitions", []) if part.get("Content") == "Windows_FAT_32"
+                     and isinstance(part.get("MountPoint"), str)]
+        if not roots:
+            roots = [child for child in Path("/Volumes").iterdir() if child.is_dir()]
     else:
         roots = [Path("/Volumes"), Path("/media") / os.environ.get("USER", ""),
                  Path("/run/media") / os.environ.get("USER", "")]
@@ -531,9 +620,13 @@ def detect_sd_cards() -> list[Path]:
     candidates = []
     for root in roots:
         try:
-            if root.is_dir() and not root.is_symlink() and (
-                    (root / ".update_most" / "managed.json").is_file() or
-                    ((root / "cores").is_dir() and (root / "system").is_dir())):
+            if not root.is_dir() or root.is_symlink():
+                continue
+            recognized = ((root / ".update_most" / "managed.json").is_file() or
+                          ((root / "cores").is_dir() and (root / "system").is_dir()))
+            info = mac_card_info(root) if sys.platform == "darwin" else None
+            formatted = info is not None and card_format_issue(info) is None
+            if recognized or formatted:
                 candidates.append(root)
         except OSError:
             continue
@@ -548,10 +641,22 @@ def interactive_menu(sd_path: str | None):
         if found:
             print("Likely Game Bub cards:")
             for index, path in enumerate(found, 1):
-                print(f"  {index}. {path}")
+                info = mac_card_info(path)
+                detail = (f" | {info['filesystem']} / {info['scheme']} | {info['size'] // (1024 ** 3)} GiB"
+                          if info and isinstance(info.get("size"), int) else "")
+                print(f"  {index}. {path}{detail}")
         chosen = input("SD card number or full mount path: ").strip()
         sd_path = str(found[int(chosen) - 1]) if chosen.isdigit() and 1 <= int(chosen) <= len(found) else chosen
-    sd = ensure_safe_root(Path(sd_path).expanduser(), False, True)
+    selected = Path(sd_path).expanduser()
+    try:
+        sd = ensure_safe_root(selected, False, True)
+    except UpdaterError as exc:
+        if not str(exc).startswith("Unrecognized SD directory"):
+            raise
+        ensure_safe_root(selected, True, True)
+        if input("Initialize the selected card's cores/system/roms folders? (yes/no): ").strip().casefold() != "yes":
+            return 1
+        sd = ensure_safe_root(selected, True, False)
     settings = load_settings(sd)
 
     def common():
@@ -571,7 +676,7 @@ def interactive_menu(sd_path: str | None):
         print("4 BIOS manager      5 Verify installation  6 Restore core")
         print("7 Uninstall core     8 Settings             9 Official firmware")
         print("10 Arcade ROM builder")
-        print("11 Import prepared arcade ZIP")
+        print("11 Import prepared arcade ZIP  12 Card health report")
         print("0 Exit")
         choice = input("Choose: ").strip()
         if choice == "0":
@@ -635,21 +740,48 @@ def interactive_menu(sd_path: str | None):
             if setting in {"1", "2", "3", "4", "5", "6", "7"}:
                 save_settings(sd, settings)
             continue
-        if choice in {"1", "2", "4", "5"}:
-            flags = {"1": [], "2": ["--check-only"], "4": ["--bios-only"],
-                     "5": ["--verify-installation"]}[choice]
-        elif choice in {"3", "6", "7"}:
-            if choice == "3":
+        if choice == "3":
+            try:
                 location = (COMMUNITY_CATALOG_URL if settings["catalog_track"] == "github" else
                             str(Path(__file__).with_name("catalog.json")))
                 catalog = merge_catalogs(load_catalog(location), [load_catalog(path) for path in settings["databases"]])
-                for core in catalog["cores"]:
-                    print(f"  {core['id']}: {core['name']} [{core.get('channel', 'stable')}]")
+                categories = sorted({core.get("category", "Other") for core in
+                                     browse_cores(catalog, settings["hardware"], settings["channel"])})
+                print("Categories: " + ", ".join(categories))
+                category = input("Category (blank for all): ").strip()
+                entries = browse_cores(catalog, settings["hardware"], settings["channel"], category)
+                if not entries:
+                    print("No cores in that category.")
+                    continue
+                installed = load_state(sd)["installed"]
+                for core in entries:
+                    old = installed.get(core["id"], {}).get("version", "not managed")
+                    print(f"  {core['id']} | {core['name']} | {core.get('category', 'Other')} | {old}")
+                ident = input("Core ID (blank to cancel): ").strip()
+                selected = next((core for core in entries if core["id"] == ident), None)
+                if selected is None:
+                    continue
+                print(f"Developer: {(selected.get('upstream') or {}).get('author', 'unknown')}")
+                print(f"Firmware: {selected.get('requires_firmware', 'not specified')}")
+                print("1 Check update and README  2 Install/update  3 Release notes  0 Back")
+                action = input("Choose: ").strip()
+                if action in {"1", "2"}:
+                    print("Result code:", main(common() + ["--core", ident] +
+                                               (["--check-only"] if action == "1" else [])))
+                elif action == "3":
+                    url, notes = github_release_notes(selected["source"])
+                    print(url + "\n" + notes)
+            except (UpdaterError, OSError, ValueError) as exc:
+                print("ERROR:", exc, file=sys.stderr)
+            continue
+        if choice in {"1", "2", "4", "5", "12"}:
+            flags = {"1": [], "2": ["--check-only"], "4": ["--bios-only"],
+                     "5": ["--verify-installation"], "12": ["--health"]}[choice]
+        elif choice in {"6", "7"}:
             ident = input("Core ID (blank to cancel): ").strip()
             if not ident:
                 continue
-            flags = (["--core", ident, "--skip-bios"] if choice == "3" else
-                     ["--restore-core", ident] if choice == "6" else ["--uninstall-core", ident])
+            flags = ["--restore-core", ident] if choice == "6" else ["--uninstall-core", ident]
         else:
             continue
         try:
@@ -951,6 +1083,9 @@ def ensure_safe_root(sd: Path, init: bool, dry_run: bool):
                 python_drive=Path(sys.executable).drive,
                 windows_drive=Path(os.environ.get("windir", "C:\\Windows")).drive)):
             raise UpdaterError("Refusing to operate on OS, home, or network root")
+    media = mac_card_info(sd)
+    if not dry_run and card_format_issue(media):
+        raise UpdaterError(card_format_issue(media))
     if (sd / "cores").is_symlink() or (sd / ".update_most").is_symlink():
         raise UpdaterError("SD management directories must not be symlinks")
     for rel in (".update_most/managed.json", ".update_most/backups"):
@@ -959,7 +1094,9 @@ def ensure_safe_root(sd: Path, init: bool, dry_run: bool):
     if not init and not marker.exists() and not (sd / "cores").is_dir():
         raise UpdaterError("Unrecognized SD directory. Use --init on an explicitly selected SD root")
     if init and not dry_run:
-        (sd / "cores").mkdir(exist_ok=True)
+        for folder in ("cores", "system", "roms"):
+            check_no_symlink(sd, folder)
+            (sd / folder).mkdir(exist_ok=True)
     return sd
 
 
@@ -1010,6 +1147,146 @@ def verify_installation(sd: Path, state: dict) -> dict:
                 issues.append((rel, "modified"))
         report[core_id] = issues
     return report
+
+
+def installation_health(sd: Path, catalog: dict, state: dict, hardware: str,
+                        channel: str, installed_firmware: str | None = None) -> dict:
+    """Build a read-only readiness report from files on the selected card."""
+    managed = verify_installation(sd, state)
+    eligible = [core for core in catalog["cores"] if core.get("enabled", True) and
+                (channel == "beta" or core.get("channel", "stable") == "stable") and
+                hardware in core.get("hardware", [hardware])]
+    core_root = sd / "cores"
+    present = set()
+    if core_root.is_dir():
+        for path in core_root.iterdir():
+            if path.is_dir() and not path.is_symlink() and (path / "core.json").is_file():
+                present.add(path.name)
+    missing_cores = [core["id"] for core in eligible if core["id"] not in present]
+    untracked = sorted(present - set(state["installed"]))
+    damaged = {core_id: issues for core_id, issues in managed.items() if issues}
+
+    bios_present = 0
+    bios_missing = []
+    bios_invalid = []
+    groups = {}
+    for item in catalog.get("bios", []):
+        if not item.get("enabled", True):
+            continue
+        core_id = item.get("core_id")
+        if core_id and core_id not in present:
+            continue
+        group = (core_id, item["one_of"]) if item.get("one_of") else None
+        if group:
+            groups.setdefault(group, {"valid": False, "names": []})["names"].append(item["name"])
+        try:
+            destination = confirmed_core_bios_destination(sd, item) if item.get("target_core") else None
+            if item.get("target_core") and core_id and not destination:
+                raise UpdaterError("installed core metadata does not confirm BIOS destination")
+            destination = destination or item["destination"]
+            check_no_symlink(sd, destination)
+            path = sd.joinpath(*PurePosixPath(destination).parts)
+            if path.exists():
+                if not path.is_file() or path.stat().st_size > MAX_BIOS_SIZE or not bios_content_valid(path.read_bytes(), item):
+                    bios_invalid.append(item["name"])
+                else:
+                    bios_present += 1
+                    if group:
+                        groups[group]["valid"] = True
+            elif item.get("required", False):
+                bios_missing.append(item["name"])
+        except (UpdaterError, OSError, ValueError) as exc:
+            bios_invalid.append(f"{item['name']}: {exc}")
+    for (core_id, _), result in groups.items():
+        if not result["valid"]:
+            bios_missing.append(f"{core_id}: one of {', '.join(result['names'])}")
+
+    firmware_incompatible = []
+    firmware_unknown = []
+    firmware_manual = []
+    for core in eligible:
+        if core["id"] not in present or not core.get("requires_firmware"):
+            continue
+        minimum = firmware_floor(core["requires_firmware"])
+        if not installed_firmware:
+            firmware_unknown.append(core["id"])
+        elif minimum and firmware_version_key(installed_firmware) < minimum:
+            firmware_incompatible.append(core["id"])
+        elif "custom" in core["requires_firmware"].casefold():
+            firmware_manual.append(core["id"])
+
+    arcade = {}
+    arcade_manifest = json.loads((Path(__file__).with_name("databases") / "arcade_images.json").read_text(encoding="utf-8"))
+    for system, core_id, folder in (("mcr", "alanswx.MCR", "MCR"),
+                                    ("universal", "alanswx.Universal", "Universal")):
+        if core_id not in present:
+            continue
+        known = {entry["filename"]: entry for entry in arcade_manifest["images"] if entry["system"] == system}
+        location = sd / "roms" / folder
+        check_no_symlink(sd, "roms/" + folder)
+        ready = 0
+        unverified = 0
+        if location.is_dir():
+            for path in location.iterdir():
+                if path.suffix.lower() != ".rom" or path.name.startswith("."):
+                    continue
+                item = known.get(path.name)
+                if (item and path.is_file() and not path.is_symlink() and path.stat().st_size == item["size"] and
+                        (file_sha(path) if item.get("sha256") else file_md5(path)) ==
+                        (item.get("sha256") or item.get("md5"))):
+                    ready += 1
+                else:
+                    unverified += 1
+        arcade[system] = {"ready": ready, "unverified": unverified}
+    media = mac_card_info(sd)
+    return {"media": media, "format_unverified": os.path.ismount(sd) and media is None,
+            "managed": len(managed), "healthy": len(managed) - len(damaged), "damaged": damaged,
+            "untracked": untracked, "missing_cores": missing_cores,
+            "bios_present": bios_present, "bios_missing": bios_missing, "bios_invalid": bios_invalid,
+            "firmware_incompatible": firmware_incompatible, "firmware_unknown": firmware_unknown,
+            "firmware_manual": firmware_manual,
+            "arcade": arcade}
+
+
+def print_health_report(report: dict) -> bool:
+    """Display actionable card status; return whether it can be called ready."""
+    print("\nGame Bub card health")
+    media = report.get("media")
+    if media:
+        print(f"- Card format: {media['filesystem']} / {media['scheme']}" +
+              (" (removable)" if media["removable"] else ""))
+        if card_format_issue(media):
+            print("  FORMAT NEEDS ATTENTION: " + card_format_issue(media))
+    elif report.get("format_unverified"):
+        print("- Card format could not be verified; confirm FAT32 with an MBR partition table")
+    print(f"- Managed cores: {report['healthy']}/{report['managed']} verified")
+    if report["damaged"]:
+        for core_id, issues in report["damaged"].items():
+            print(f"  REPAIR {core_id}: " + ", ".join(f"{rel} {reason}" for rel, reason in issues))
+    if report["missing_cores"]:
+        print("- Catalog cores not installed: " + ", ".join(report["missing_cores"]))
+    if report["untracked"]:
+        print("- Present but not managed by Update_Most: " + ", ".join(report["untracked"]))
+    print(f"- BIOS files verified: {report['bios_present']}")
+    if report["bios_missing"]:
+        print("  MISSING REQUIRED: " + "; ".join(report["bios_missing"]))
+    if report["bios_invalid"]:
+        print("  BIOS NEEDS REVIEW: " + "; ".join(report["bios_invalid"]))
+    for system, status in report["arcade"].items():
+        print(f"- {system.upper()} arcade: {status['ready']} verified games, {status['unverified']} unverified images")
+    if report["firmware_incompatible"]:
+        print("- Firmware version is too old for: " + ", ".join(report["firmware_incompatible"]))
+    if report["firmware_unknown"]:
+        print("- Firmware version not supplied for: " + ", ".join(report["firmware_unknown"]))
+        print("  Read Settings > About on the handheld; use --installed-firmware VERSION, then --check-only for current author READMEs.")
+    if report["firmware_manual"]:
+        print("- Custom firmware compatibility needs manual review for: " + ", ".join(report["firmware_manual"]))
+    blockers = (bool(card_format_issue(media) or report.get("format_unverified") or report["damaged"] or report["missing_cores"] or report["bios_missing"] or
+                     report["bios_invalid"] or report["firmware_incompatible"] or report["firmware_unknown"] or
+                     report["firmware_manual"]) or
+                any(not status["ready"] for status in report["arcade"].values()))
+    print("SD CARD NEEDS ATTENTION" if blockers else "SD CARD READY — safely eject and play")
+    return not blockers
 
 
 def uninstall_core(sd: Path, state: dict, core_id: str):
@@ -1409,11 +1686,12 @@ def confirmed_core_bios_destination(sd: Path, item: dict) -> str | None:
 
 def manage_bios(sd: Path, catalog: dict, directory: Path | None, dry_run: bool,
                 *, fetcher=None, predicted_core_ids=None,
-                allow_mister_bios=True) -> tuple[int, int, int]:
+                allow_mister_bios=True, selected_core_ids=None) -> tuple[int, int, int]:
     """Manage BIOS, automatically fetching pinned MiSTer DB entries by default."""
     if fetcher is None:
         fetcher = fetch
-    entries = [item for item in catalog.get("bios", []) if item.get("enabled", True)]
+    entries = [item for item in catalog.get("bios", []) if item.get("enabled", True) and
+               (selected_core_ids is None or item.get("core_id") in selected_core_ids)]
     if not entries:
         print("\nBIOS: no entries in community catalog")
         return 0, 0, 0
@@ -1553,6 +1831,7 @@ def main(argv=None):
     actions = parser.add_mutually_exclusive_group()
     actions.add_argument("--check-only", action="store_true", help="Check available core versions without downloading packages or writing to SD")
     actions.add_argument("--verify-installation", action="store_true", help="Check SHA-256 of every managed core file without changing the SD card")
+    actions.add_argument("--health", action="store_true", help="Read-only core, BIOS, arcade, and firmware readiness report")
     actions.add_argument("--uninstall-core", metavar="ID", help="Remove verified managed files for one core; preserve user files")
     actions.add_argument("--restore-core", metavar="ID", help="Restore one core from its latest pre-update backup")
     actions.add_argument("--firmware-check", action="store_true", help="Show the selected Rev4 firmware release")
@@ -1607,7 +1886,7 @@ def main(argv=None):
         return 0
     if args.bios_only and args.skip_bios:
         parser.error("--bios-only and --skip-bios cannot be combined")
-    if (args.bios_only or args.dry_run or args.init) and (args.verify_installation or args.uninstall_core or args.restore_core):
+    if (args.bios_only or args.dry_run or args.init) and (args.verify_installation or args.health or args.uninstall_core or args.restore_core):
         parser.error("Management actions cannot be combined with --bios-only, --dry-run, or --init")
     if not args.sd and not args.list and not args.list_bios:
         if sys.stdin.isatty():
@@ -1650,6 +1929,12 @@ def main(argv=None):
         if not catalog["cores"]:
             print("No published core entries yet. Curator: add releases to catalog.json.")
         return 0
+    if args.health:
+        sd = ensure_safe_root(Path(args.sd).expanduser(), False, True)
+        state = load_state(sd)
+        version = args.installed_firmware or load_settings(sd)["installed_firmware"] or None
+        report = installation_health(sd, catalog, state, args.hardware, args.channel, version)
+        return 0 if print_health_report(report) else 1
     sd = ensure_safe_root(Path(args.sd).expanduser(), args.init, args.dry_run or args.check_only)
     state = load_state(sd)
     ok, failed, skipped = 0, 0, 0
@@ -1745,8 +2030,12 @@ def main(argv=None):
         bios_dir = Path(args.bios_dir).expanduser().resolve() if args.bios_dir else None
         planned = {c["id"] for c in eligible} if args.dry_run and not args.bios_only else set()
         _, _, errors = manage_bios(sd, catalog, bios_dir, args.dry_run,
-                                   predicted_core_ids=planned, allow_mister_bios=args.mister_bios)
+                                   predicted_core_ids=planned, allow_mister_bios=args.mister_bios,
+                                   selected_core_ids={args.core} if args.core else None)
         failed += errors
+    if not args.dry_run and not args.bios_only and not args.core:
+        version = args.installed_firmware or load_settings(sd)["installed_firmware"] or None
+        print_health_report(installation_health(sd, catalog, state, args.hardware, args.channel, version))
     return 1 if failed else 0
 
 

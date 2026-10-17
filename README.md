@@ -18,6 +18,7 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 - Allows a local catalog (default) or explicitly supplied HTTPS catalog.
 - Combines separately identified community databases with conflict checks; an interactive menu saves preferences on the selected card.
 - Checks available versions without package downloads, verifies tracked files, restores pre-update snapshots, and removes only verified managed core files.
+- Produces a read-only card health report covering managed cores, required BIOS files, prepared arcade images, and the reported handheld firmware version.
 - Reuses SHA-256-verified release packages from an SD-card cache and checks free space before installation.
 - Separately downloads the official stable Rev4 UF2 or the pinned v1.1-beta2 core-loading UF2 to a computer folder; firmware is never flashed during a core update.
 - Retrieves pinned offline MCR and Universal ROM builders from the core authors for locally preparing user-owned MAME sets.
@@ -32,9 +33,9 @@ Python 3.9 or later, a computer with Internet access for core downloads, and a G
 
 ### Interactive menu
 
-Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a core browser, BIOS management, verification, restore, uninstall, and settings. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
+Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a category-filtered core browser, BIOS management, a card health report, verification, restore, uninstall, and settings. The browser shows the installed version, firmware requirement, current update/README check, and author release notes before installing a selected core. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
 
-The menu's detection is a convenience, not proof that a selected drive is an SD card. Confirm the path before choosing an update. A new card still requires an explicit `--sd ... --init` once.
+On macOS the menu lists mounted external FAT32 cards, including cards without an Update_Most layout, and shows their size and partition scheme when disk metadata is available. It offers to create `cores`, `system`, and `roms` on a selected new card. The updater rejects writes to a macOS mounted volume when disk metadata shows a filesystem other than FAT32 or a partition table other than MBR. On other platforms, confirm the card format yourself using the [Game Bub card requirements](https://docs.gamebub.net/user-guide/playing-games/). Detection still requires you to select the destination; it never formats a drive.
 
 ### Firmware needed for third-party cores
 
@@ -83,12 +84,15 @@ python3 update_most.py --list
 # Verify all files recorded by Update_Most
 ./update_most.sh --sd /Volumes/GAMEBUB --verify-installation
 
+# Read-only readiness report, using the version shown in Settings > About
+./update_most.sh --sd /Volumes/GAMEBUB --health --installed-firmware v1.1-beta2
+
 # Restore a prior managed version or remove one managed core
 ./update_most.sh --sd /Volumes/GAMEBUB --restore-core NES
 ./update_most.sh --sd /Volumes/GAMEBUB --uninstall-core NES
 ```
 
-On Linux the SD mount path will differ, for example `/run/media/$USER/GAMEBUB`. Only use `--init` when preparing a previously unrecognized card. The updater does not format storage.
+On Linux the SD mount path will differ, for example `/run/media/$USER/GAMEBUB`. Only use `--init` when preparing a previously unrecognized card. The updater does not format storage. The health report does not access the network or change files; it reports missing required BIOS/PROM files and distinguishes verified managed cores from other cores already on the card. It checks arcade images against the pinned game manifest and flags firmware as unknown unless you supply a version or save one in the menu.
 
 ### Windows PowerShell
 

@@ -85,6 +85,8 @@ class TestBios(unittest.TestCase):
 
     def test_missing_required_and_unused_core_skipped(self):
         self.assertEqual(u.manage_bios(self.sd, self.cat(), None, False), (0, 1, 0))
+        self.assertEqual(u.manage_bios(self.sd, self.cat(), None, False,
+                                       selected_core_ids={"Other.Core"}), (0, 0, 0))
         (self.sd / 'cores' / 'Demo.Core' / 'core.json').unlink()
         self.assertEqual(u.manage_bios(self.sd, self.cat(), None, False), (0, 0, 0))
 

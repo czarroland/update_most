@@ -213,6 +213,56 @@ class TestUpdateMost(unittest.TestCase):
             self.assertEqual(u.main(["--sd", str(self.sd), "--catalog", str(cpath), "--check-only"]), 0)
         self.assertFalse((self.sd / ".update_most").exists())
 
+    def test_init_creates_game_bub_layout(self):
+        fresh = Path(self.tmp.name) / "NEW_CARD"
+        fresh.mkdir()
+        u.ensure_safe_root(fresh, init=True, dry_run=False)
+        self.assertTrue((fresh / "cores").is_dir())
+        self.assertTrue((fresh / "system").is_dir())
+        self.assertTrue((fresh / "roms").is_dir())
+        self.assertFalse((fresh / ".update_most").exists())
+
+    def test_macos_card_format_and_new_card_discovery(self):
+        blank = Path(self.tmp.name) / "BLANK"
+        blank.mkdir()
+        volume = {"MountPoint": str(blank), "ParentWholeDisk": "disk4", "Content": "Windows_FAT_32",
+                  "RemovableMediaOrExternalDevice": True, "VolumeSize": 32 * 1024 ** 3, "FreeSpace": 31 * 1024 ** 3}
+        whole = {"Content": "FDisk_partition_scheme"}
+        with patch.object(u, "mac_diskutil_plist", side_effect=[volume, whole]):
+            info = u.mac_card_info(blank)
+        self.assertIsNone(u.card_format_issue(info))
+        listing = {"AllDisksAndPartitions": [{"Partitions": [{"Content": "Windows_FAT_32",
+                    "MountPoint": str(blank)}]}]}
+        with patch.object(u.sys, "platform", "darwin"), \
+             patch.object(u, "mac_diskutil_plist", return_value=listing), \
+             patch.object(u, "mac_card_info", return_value=info):
+            self.assertIn(blank, u.detect_sd_cards())
+
+    def test_bad_card_format_blocks_writes_but_allows_read_only_inspection(self):
+        wrong = {"filesystem": "ExFAT", "scheme": "GUID_partition_scheme", "removable": True}
+        with patch.object(u, "mac_card_info", return_value=wrong):
+            with self.assertRaisesRegex(u.UpdaterError, "FAT32 on an MBR"):
+                u.ensure_safe_root(self.sd, False, False)
+            self.assertEqual(u.ensure_safe_root(self.sd, False, True), self.sd.resolve())
+
+    def test_health_report_checks_required_bios_and_firmware_without_writes(self):
+        core_dir = self.sd / "cores" / CORE_ID
+        core_dir.mkdir()
+        (core_dir / "core.json").write_text(json.dumps({"metadata": {"id": CORE_ID}}))
+        catalog = {"schema": 1, "cores": [{"id": CORE_ID, "name": "Demo",
+                   "requires_firmware": "v1.1-beta2 or newer"}],
+                   "bios": [{"id": "boot", "name": "Required boot ROM", "core_id": CORE_ID,
+                             "destination": "cores/Tests.Demo/boot.rom", "size": 4, "required": True}]}
+        report = u.installation_health(self.sd, catalog, self.state, "gamebub_rev4", "stable", "v1.0.2")
+        self.assertEqual(report["bios_missing"], ["Required boot ROM"])
+        self.assertEqual(report["firmware_incompatible"], [CORE_ID])
+        self.assertFalse((self.sd / ".update_most").exists())
+        (core_dir / "boot.rom").write_bytes(b"BOOT")
+        report = u.installation_health(self.sd, catalog, self.state, "gamebub_rev4", "stable", "v1.1-beta2")
+        self.assertEqual(report["bios_missing"], [])
+        self.assertEqual(report["firmware_incompatible"], [])
+        self.assertTrue(u.print_health_report(report))
+
     def test_independent_databases_merge_and_reject_conflicts(self):
         source = {"type": "url", "url": "https://example.org/demo.zip", "version": "1", "sha256": "a" * 64}
         primary = {"schema": 1, "cores": [{"id": "Main", "name": "Main", "source": source}]}
@@ -326,6 +376,22 @@ class TestUpdateMost(unittest.TestCase):
         self.assertIn("incompatible", u.firmware_compatibility(core, notes, "v1.1-beta1"))
         self.assertIn("meets known minimum", u.firmware_compatibility(core, notes, "v1.1-beta2"))
         self.assertIn("unknown", u.firmware_compatibility(core, notes, None))
+        custom = {"requires_firmware": "custom core-loading v1.1 beta firmware"}
+        self.assertIn("manual review", u.firmware_compatibility(custom, [], "v1.1-beta2"))
+
+    def test_core_browser_filters_category_and_release_notes(self):
+        source = {"type": "github_release", "repo": "danisla/gamebub-nes", "asset": "demo.zip"}
+        catalog = {"cores": [{"id": "NES", "name": "NES", "category": "Console", "source": source},
+                             {"id": "Arcade", "name": "Arcade", "category": "Arcade", "channel": "beta",
+                              "source": source}]}
+        self.assertEqual([core["id"] for core in u.browse_cores(catalog, "gamebub_rev4", "stable")], ["NES"])
+        self.assertEqual([core["id"] for core in u.browse_cores(catalog, "gamebub_rev4", "beta", "Arcade")],
+                         ["Arcade"])
+        release = {"html_url": "https://github.com/danisla/gamebub-nes/releases/tag/v1.0.0",
+                   "body": "Fixed SD card loading."}
+        url, notes = u.github_release_notes(source, lambda *_: json.dumps(release).encode())
+        self.assertIn("/v1.0.0", url)
+        self.assertIn("SD card", notes)
 
     def test_check_only_reports_beta_firmware_mismatch(self):
         catalog = {"schema": 1, "cores": [{"id": CORE_ID, "name": "Demo",
