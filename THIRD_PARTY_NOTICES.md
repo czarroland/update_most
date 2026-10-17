@@ -22,7 +22,7 @@ GPL-3.0 project sources must not be copied without a provenance and license revi
 - [alanswx/ColecoVision_GameBub](https://github.com/alanswx/ColecoVision_GameBub) — ColecoVision; GPL-3.0.
 - [alanswx/Apple-IIgs_GameBub](https://github.com/alanswx/Apple-IIgs_GameBub) — Apple IIgs; GPL-3.0.
 - [danifunker/MacLC_GameBub](https://github.com/danifunker/MacLC_GameBub) — Macintosh LC; GPL-3.0-or-later (project README).
-- [alanswx/MCR_GameBub](https://github.com/alanswx/MCR_GameBub) — Bally Midway MCR arcade; repository license not independently resolved for this notice. **No code imported.**
+- [alanswx/MCR_GameBub](https://github.com/alanswx/MCR_GameBub) — Bally Midway MCR arcade; repository license not independently resolved for this notice. **No code imported.** The MCR fixed `ssio.prom` and user-selected game ROM slots are described in [docs/mcr-arcade.md](docs/mcr-arcade.md), based on user-provided file metadata and published v0.6.0 core metadata; the uploaded `files.json` is not copied into this repository.
 - [alanswx/Universal_GameBub](https://github.com/alanswx/Universal_GameBub) — Universal arcade; repository license not independently resolved for this notice. **No code imported.**
 - [czarroland/gamegear-bub](https://github.com/czarroland/gamegear-bub) — Sega Game Gear / Master System; GPL-3.0.
 - **Kitrinx** — credited for the Game Bub Neo Geo Pocket Color and Tiger Game.com cores. Their supplied `core.json` described GPL-3.0-only; `files.json` established BIOS filenames and sizes. These original files are **not included verbatim**. Synthetic test fixtures reproduce only the needed interface details, not the FPGA source.

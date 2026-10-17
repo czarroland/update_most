@@ -1,6 +1,6 @@
 # Catalog metadata and source attribution
 
-Update_Most uses an application-specific JSON catalog with `schema: 1`. The original format is processed by `update_most.load_catalog`. An additional offline provenance check is provided by `validate_catalog.py`.
+Update_Most uses an application-specific JSON catalog with `schema: 1` and an independently incremented `catalog_revision` (a positive integer). The schema denotes parser compatibility; `catalog_revision` denotes reviewed catalog changes. The original format is processed by `update_most.load_catalog`. An additional offline provenance check is provided by `validate_catalog.py`.
 
 ## Validate before submitting
 

@@ -1,0 +1,48 @@
+# Host-side only. Explicitly triggered to avoid unexpected large downloads.
+# AI-assisted design (OpenAI ChatGPT); no MiSTer code copied.
+name: Verify Published Core Archives
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Core channel to audit"
+        required: true
+        default: "beta"
+        type: choice
+        options:
+          - stable
+          - beta
+      metadata_only:
+        description: "Skip binary ZIP download and simulated installation"
+        required: true
+        type: boolean
+        default: true
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify source metadata and optionally core release ZIP bytes
+        env:
+          CHECK_CHANNEL: ${{ inputs.channel }}
+          METADATA_ONLY: ${{ inputs.metadata_only }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--channel "$CHECK_CHANNEL" --report core-archive-audit.json)
+          if [[ "$METADATA_ONLY" == "true" ]]; then args+=(--metadata-only); fi
+          python3 verify_all.py "${args[@]}"
+      - name: Attach host-side audit JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gamebub-archive-audit
+          path: core-archive-audit.json
+          if-no-files-found: warn
+          retention-days: 30
