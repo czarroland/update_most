@@ -277,8 +277,8 @@ class TestUpdateMost(unittest.TestCase):
 
     def test_settings_persist_on_card(self):
         settings = u.load_settings(self.sd)
-        self.assertEqual(settings["channel"], "stable")
-        settings["channel"] = "beta"
+        self.assertEqual(settings["channel"], "beta")
+        settings["channel"] = "stable"
         settings["databases"] = ["https://example.org/extra.json"]
         u.save_settings(self.sd, settings)
         self.assertEqual(u.load_settings(self.sd), settings)
@@ -434,6 +434,21 @@ class TestUpdateMost(unittest.TestCase):
         with self.assertRaisesRegex(u.UpdaterError, "Unexpected"):
             u.import_arcade_images(self.sd, archive, "universal", False, manifest_path)
         self.assertFalse((self.sd / "roms").exists())
+
+    def test_update_everything_runs_arcade_for_installed_core_unless_skipped(self):
+        core = self.sd / "cores" / "alanswx.MCR"
+        core.mkdir()
+        (core / "core.json").write_text("{}")
+        catalog = Path(self.tmp.name) / "empty-catalog.json"
+        catalog.write_text('{"schema":1,"cores":[],"bios":[]}')
+        with patch.object(u, "auto_arcade_images", return_value=0) as arcade, redirect_stdout(io.StringIO()):
+            self.assertEqual(u.main(["--sd", str(self.sd), "--catalog", str(catalog),
+                                     "--dry-run", "--skip-bios"]), 0)
+            arcade.assert_called_once_with(self.sd.resolve(), "mcr", True)
+            arcade.reset_mock()
+            self.assertEqual(u.main(["--sd", str(self.sd), "--catalog", str(catalog),
+                                     "--dry-run", "--skip-bios", "--skip-arcade"]), 0)
+            arcade.assert_not_called()
 
 
 if __name__ == "__main__":

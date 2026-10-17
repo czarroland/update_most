@@ -14,16 +14,16 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 - Downloads GitHub release ZIP archives, checks release SHA-256 values where available, and validates Game Bub core metadata and hardware targets.
 - Installs to `/cores/<core-id>/`, backs up managed files before replacement, and keeps a record of managed files.
 - Handles BIOS paths, user-supplied BIOS imports, and selected MiSTer community BIOS database entries.
-- Preserves unrelated saves and ROM files. Does **not** format a card, download games, or flash the handheld firmware.
+- Preserves unrelated saves and ROM files. Does **not** format a card or flash the handheld firmware.
 - Allows a local catalog (default) or explicitly supplied HTTPS catalog.
 - Combines separately identified community databases with conflict checks; an interactive menu saves preferences on the selected card.
 - Checks available versions without package downloads, verifies tracked files, restores pre-update snapshots, and removes only verified managed core files.
 - Produces a read-only card health report covering managed cores, required BIOS files, prepared arcade images, and the reported handheld firmware version.
 - Reuses SHA-256-verified release packages from an SD-card cache and checks free space before installation.
 - Separately downloads the official stable Rev4 UF2 or the pinned v1.1-beta2 core-loading UF2 to a computer folder; firmware is never flashed during a core update.
-- Retrieves pinned offline MCR and Universal ROM builders from the core authors for locally preparing user-owned MAME sets.
+- Automatically downloads checksum-pinned MAME ZIPs from Archive.org and prepares author-verified MCR and Universal arcade images when those cores are installed. The authors' offline builders remain available.
 - Runs offline unit tests on synthetic data. Includes a core archive verification utility.
-- Documents the MCR arcade ROM selection and validates its separately supplied SSIO timing PROM against installed core metadata. Does not retrieve games or arcade PROMs.
+- Validates the MCR SSIO timing PROM from the same Archive.org collection against its pinned hash and installed core metadata.
 
 ## Requirements
 
@@ -34,6 +34,8 @@ Python 3.9 or later, a computer with Internet access for core downloads, and a G
 ### Interactive menu
 
 Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a category-filtered core browser, BIOS management, a card health report, verification, restore, uninstall, and settings. The browser shows the installed version, firmware requirement, current update/README check, and author release notes before installing a selected core. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
+
+New cards default to the beta catalog channel so Update everything includes third-party cores that require the v1.1 beta firmware. This does not change the handheld's firmware; use Settings to switch the catalog channel to stable if desired.
 
 On macOS the menu lists mounted external FAT32 cards, including cards without an Update_Most layout, and shows their size and partition scheme when disk metadata is available. It offers to create `cores`, `system`, and `roms` on a selected new card. The updater rejects writes to a macOS mounted volume when disk metadata shows a filesystem other than FAT32 or a partition table other than MBR. On other platforms, confirm the card format yourself using the [Game Bub card requirements](https://docs.gamebub.net/user-guide/playing-games/). Detection still requires you to select the destination; it never formats a drive.
 
@@ -57,13 +59,22 @@ The interactive menu can save that reported version in the card's settings. If i
 ### Arcade ROM preparation
 
 ```sh
+python3 update_most.py --sd /Volumes/GAMEBUB --arcade-auto
+python3 update_most.py --sd /Volumes/GAMEBUB --arcade-auto --arcade-system universal --arcade-game ladybug
+```
+
+The normal **Update everything** action runs this automatically after core and BIOS updates for installed MCR and Universal cores. The first run downloads only needed source ZIPs from the [MAME 0.209 Archive.org collection](https://archive.org/details/MAME209RomsOnlyMerged). Every source ZIP is checked against the collection's pinned SHA-1 and every prepared image against the [core authors' output hashes](databases/arcade_images.json). We verified 19 MCR and 52 Universal images against that collection. Five Universal variants lack matching chips there and are left alone. The MCR timing PROM is installed automatically only when the installed core confirms its destination. Existing differing card files are preserved. Use `--skip-arcade` to omit this step in an Update everything run.
+
+The offline builder and prepared ZIP import are still available:
+
+```sh
 python3 update_most.py --arcade-builder mcr --output ~/Downloads
 python3 update_most.py --arcade-builder universal --output ~/Downloads
 python3 update_most.py --sd /Volumes/GAMEBUB --arcade-import ~/Downloads/MCR-GameBub-ROMs.zip --arcade-system mcr
 python3 update_most.py --sd /Volumes/GAMEBUB --arcade-import ~/Downloads/Universal-GameBub-ROMs.zip --arcade-system universal
 ```
 
-The builder commands save SHA-256-pinned, self-contained offline tools published by the [MCR](https://github.com/alanswx/MCR_GameBub/tree/main/web) and [Universal](https://github.com/alanswx/Universal_GameBub/tree/main/web) core authors. Open the saved HTML locally, supply your own matching MAME ZIPs, and export its SD-folder ZIP. The import commands verify each prepared `.rom` image against the pinned [game manifest](databases/arcade_images.json) before placing it under `roms/MCR` or `roms/Universal`. Existing differing files are preserved. An included MCR timing PROM is accepted only when it matches the pinned checksum and the installed core confirms its destination. The builders run locally and do not upload the user's files. Update_Most does not provide game ROMs.
+The builder commands save SHA-256-pinned, self-contained offline tools published by the [MCR](https://github.com/alanswx/MCR_GameBub/tree/main/web) and [Universal](https://github.com/alanswx/Universal_GameBub/tree/main/web) core authors. The import commands verify each prepared `.rom` image before installing it. The builders run locally and do not upload files.
 
 ### macOS or Linux
 

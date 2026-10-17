@@ -31,6 +31,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+import arcade_auto
 
 USER_AGENT = "Update_Most/0.7 (Game Bub community updater)"
 MISTER_BIOS_CSV = "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/main/external_files.csv"
@@ -310,6 +311,28 @@ def import_arcade_images(sd: Path, archive: Path, system: str, dry_run: bool = F
     return len(created), existing
 
 
+def auto_arcade_images(sd: Path, system: str | None = None, dry_run: bool = False,
+                       game_key: str | None = None) -> int:
+    """Prepare verified arcade images from the pinned Archive.org MAME collection."""
+    failures = 0
+    for kind in ((system,) if system else ("mcr", "universal")):
+        try:
+            include_prom = False
+            if kind == "mcr":
+                catalog = load_catalog(str(Path(__file__).with_name("catalog.json")))
+                item = next((item for item in catalog.get("bios", [])
+                             if item["destination"] == "cores/alanswx.MCR/ssio.prom"), None)
+                include_prom = bool(item and confirmed_core_bios_destination(sd, item))
+            _, _, errors = arcade_auto.prepare(kind, sd, fetch, import_arcade_images,
+                                                dry_run=dry_run, game_key=game_key,
+                                                include_prom=include_prom)
+            failures += errors
+        except (arcade_auto.ArcadeError, UpdaterError, OSError, zipfile.BadZipFile) as exc:
+            print(f"{kind.upper()} arcade: {exc}", file=sys.stderr)
+            failures += 1
+    return failures
+
+
 def readme_firmware_notes(repo: str, fetcher=None) -> list[str]:
     """Read a core author's current README and return concise firmware lines."""
     if not REPO_RE.fullmatch(repo):
@@ -431,7 +454,9 @@ def fetch(url: str, limit: int = MAX_DOWNLOAD, hosts=None) -> bytes:
                 if urllib.parse.urlparse(res.geturl()).scheme != "https":
                     raise UpdaterError("Download redirected to non-HTTPS destination")
                 # GitHub release binary redirects to release-assets.githubusercontent.com.
-                if hosts and final_host not in hosts:
+                if hosts and final_host not in hosts and not (
+                    "archive.org" in hosts and final_host and final_host.endswith(".archive.org")
+                ):
                     raise UpdaterError("Unexpected redirect host: " + str(final_host))
                 content_length = res.headers.get("Content-Length")
                 if content_length and int(content_length) > limit:
@@ -533,7 +558,7 @@ def merge_catalogs(primary: dict, extras: list[dict]) -> dict:
 def load_settings(sd: Path) -> dict:
     path = sd / ".update_most" / "settings.json"
     check_no_symlink(sd, ".update_most/settings.json")
-    defaults = {"channel": "stable", "hardware": "gamebub_rev4", "catalog_track": "bundled",
+    defaults = {"channel": "beta", "hardware": "gamebub_rev4", "catalog_track": "bundled",
                 "mister_bios": True, "databases": [], "installed_firmware": ""}
     if not path.exists():
         return defaults
@@ -604,7 +629,7 @@ def mac_external_fat32_mounts(disks: dict | None) -> list[Path]:
     """Extract only mounted FAT32 partitions from diskutil's external list."""
     return [Path(part["MountPoint"]) for disk in (disks or {}).get("AllDisksAndPartitions", [])
             for part in disk.get("Partitions", []) if part.get("Content") == "Windows_FAT_32"
-            and isinstance(part.get("MountPoint"), str)]
+            and isinstance(part.get("MountPoint"), str) and Path(part["MountPoint"]).is_absolute()]
 
 
 def detect_sd_cards() -> list[Path]:
@@ -681,6 +706,7 @@ def interactive_menu(sd_path: str | None):
         print("7 Uninstall core     8 Settings             9 Official firmware")
         print("10 Arcade ROM builder")
         print("11 Import prepared arcade ZIP  12 Card health report")
+        print("13 Auto prepare arcade games from Archive.org")
         print("0 Exit")
         choice = input("Choose: ").strip()
         if choice == "0":
@@ -710,6 +736,14 @@ def interactive_menu(sd_path: str | None):
                 print("Result code:", main(["--sd", str(sd), "--arcade-import", archive,
                                            "--arcade-system", kind]))
             except (UpdaterError, OSError, ValueError, zipfile.BadZipFile) as exc:
+                print("ERROR:", exc, file=sys.stderr)
+            continue
+        if choice == "13":
+            kind = input("Arcade system (mcr/universal, blank for both): ").strip().lower()
+            try:
+                print("Result code:", main(["--sd", str(sd), "--arcade-auto"] +
+                                           (["--arcade-system", kind] if kind else [])))
+            except (UpdaterError, OSError, ValueError) as exc:
                 print("ERROR:", exc, file=sys.stderr)
             continue
         if choice == "8":
@@ -1825,7 +1859,7 @@ def main(argv=None):
                         help="Add an independently identified schema-1 core/BIOS database (repeatable)")
     parser.add_argument("--catalog-track", choices=["bundled", "github"], default="bundled",
                         help="bundled=local snapshot (default); github=current community main-branch catalog, opt-in")
-    parser.add_argument("--channel", choices=["stable", "beta"], default="stable", help="Beta installs both stable and beta entries")
+    parser.add_argument("--channel", choices=["stable", "beta"], default="beta", help="Beta installs both stable and beta entries")
     parser.add_argument("--hardware", choices=["gamebub_rev4", "gamebub_rev2"], default="gamebub_rev4")
     parser.add_argument("--installed-firmware", metavar="VERSION",
                         help="Version shown in handheld Settings > About, for core compatibility checks")
@@ -1844,7 +1878,10 @@ def main(argv=None):
                         help="Select official stable or pinned community-hosted core-loading beta firmware")
     actions.add_argument("--arcade-builder", choices=["mcr", "universal"], help="Get a pinned, author-provided offline arcade ROM builder")
     actions.add_argument("--arcade-import", metavar="ZIP", help="Verify and install an arcade builder's exported SD-folder ZIP")
+    actions.add_argument("--arcade-auto", action="store_true", help="Download and prepare checksum-verified arcade games from Archive.org")
     parser.add_argument("--arcade-system", choices=["mcr", "universal"], help="Arcade family for --arcade-import")
+    parser.add_argument("--arcade-game", metavar="KEY", help="Prepare one supported arcade game with --arcade-auto")
+    parser.add_argument("--skip-arcade", action="store_true", help="Skip automatic arcade preparation during Update everything")
     parser.add_argument("--output", metavar="DIR", help="Existing computer directory for --arcade-builder")
     parser.add_argument("--bios-only", action="store_true", help="Only check/import/fetch BIOS; skip core download")
     parser.add_argument("--skip-bios", action="store_true", help="Core updates only; do not inspect or fetch BIOS")
@@ -1878,6 +1915,13 @@ def main(argv=None):
                                               args.dry_run)
         print(f"Arcade images: {added} {'ready' if args.dry_run else 'installed'}, {present} already present.")
         return 0
+    if args.arcade_auto:
+        if not args.sd:
+            parser.error("--arcade-auto requires --sd")
+        sd = ensure_safe_root(Path(args.sd).expanduser(), False, args.dry_run)
+        return 1 if auto_arcade_images(sd, args.arcade_system, args.dry_run, args.arcade_game) else 0
+    if args.arcade_game:
+        parser.error("--arcade-game requires --arcade-auto")
     if args.firmware_check or args.firmware_download:
         release = firmware_release(args.firmware_channel)
         print(f"Game Bub Rev4 {release['channel']} firmware: {release['version']} | {release['name']}")
@@ -2037,6 +2081,10 @@ def main(argv=None):
                                    predicted_core_ids=planned, allow_mister_bios=args.mister_bios,
                                    selected_core_ids={args.core} if args.core else None)
         failed += errors
+    if not args.bios_only and not args.core and not args.skip_arcade and not args.check_only:
+        for kind, core_id in (("mcr", "alanswx.MCR"), ("universal", "alanswx.Universal")):
+            if (sd / "cores" / core_id / "core.json").is_file():
+                failed += auto_arcade_images(sd, kind, args.dry_run)
     if not args.dry_run and not args.bios_only and not args.core:
         version = args.installed_firmware or load_settings(sd)["installed_firmware"] or None
         print_health_report(installation_health(sd, catalog, state, args.hardware, args.channel, version))
