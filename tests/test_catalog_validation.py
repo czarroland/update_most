@@ -71,7 +71,9 @@ class TestCatalogProvenance(unittest.TestCase):
         self.assertTrue(any("category" in e for e in errors))
 
     def test_validator_refuses_remote_catalog(self):
-        self.assertNotEqual(0, validator.main(["--catalog", "https://example.com/catalog.json"]))
+        with self.assertRaises(SystemExit) as error:
+            validator.main(["--catalog", "https://example.com/catalog.json"])
+        self.assertEqual(error.exception.code, 2)
 
 
 if __name__ == "__main__":
