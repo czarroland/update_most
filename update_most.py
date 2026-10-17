@@ -408,7 +408,7 @@ def ensure_safe_root(sd: Path, init: bool, dry_run: bool):
     if sd.is_symlink():
         raise UpdaterError("SD path must not be a symlink")
     sd = sd.resolve()
-    if (sd == Path(sd.anchor) and not sd.drive) or sd == Path.home().resolve():
+    if sd == Path(sd.anchor) or sd == Path.home().resolve():
         raise UpdaterError("Refusing to operate on drive root or home directory")
     if (sd / "cores").is_symlink() or (sd / ".update_most").is_symlink():
         raise UpdaterError("SD management directories must not be symlinks")
@@ -669,7 +669,7 @@ def install_bios_file(sd: Path, item: dict, data: bytes, dry_run: bool):
                 raise
     except FileExistsError as exc:
         raise UpdaterError("BIOS appeared during update; refusing overwrite") from exc
-    print(f"  Installed: {destination} ({len(data)} bytes, SHA-256 {sha256(data)[:12]}…)")
+    print(f"  Installed: {destination} ({len(data)} bytes, SHA-256 {sha256(data)[:12]}...)")
 
 
 def confirmed_core_bios_destination(sd: Path, item: dict) -> str | None:
@@ -773,9 +773,9 @@ def manage_bios(sd: Path, catalog: dict, directory: Path | None, dry_run: bool,
                     [*item.get("import_paths", []), provisional_dest]))
             target = sd.joinpath(*PurePosixPath(dest).parts)
             if item.get("target_core") and not confirmed:
-                print(f"  Core BIOS filename not confirmed by installed files.json; staging → {dest}")
+                print(f"  Core BIOS filename not confirmed by installed files.json; staging -> {dest}")
             else:
-                print(f"  Destination → {dest}")
+                print(f"  Destination -> {dest}")
             check_no_symlink(sd, dest)
             if target.exists():
                 if not target.is_file() or target.stat().st_size > MAX_BIOS_SIZE:
