@@ -23,7 +23,7 @@
       "homepage": "https://github.com/danisla/gamebub-nes",
       "upstream": {
         "author": "danisla and contributors",
-        "license": "GPL-3.0-only",
+        "license": "GPL-3.0 (GitHub-reported)",
         "reference_only": true
       }
     },
@@ -45,7 +45,7 @@
       "homepage": "https://github.com/danisla/gamebub-snes",
       "upstream": {
         "author": "danisla and contributors",
-        "license": "GPL-3.0-only",
+        "license": "GPL-3.0 (GitHub-reported)",
         "reference_only": true
       }
     },
@@ -111,7 +111,7 @@
       "homepage": "https://github.com/alanswx/ColecoVision_GameBub",
       "upstream": {
         "author": "alanswx and contributors",
-        "license": "GPL-3.0-only",
+        "license": "GPL-3.0 (GitHub-reported)",
         "reference_only": true
       }
     },
@@ -133,7 +133,7 @@
       "homepage": "https://github.com/alanswx/Apple-IIgs_GameBub",
       "upstream": {
         "author": "alanswx and contributors",
-        "license": "GPL-3.0-only",
+        "license": "GPL-3.0 (GitHub-reported)",
         "reference_only": true
       }
     },
@@ -223,7 +223,7 @@
       "homepage": "https://github.com/czarroland/gamegear-bub",
       "upstream": {
         "author": "czarroland and contributors",
-        "license": "GPL-3.0-only",
+        "license": "GPL-3.0 (GitHub-reported)",
         "reference_only": true
       }
     }
