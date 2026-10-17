@@ -179,6 +179,17 @@
         "author": "alanswx and contributors",
         "license": "license not verified",
         "reference_only": true
+      },
+      "arcade_media": {
+        "description": "User-supplied MCR game image; prepared separately from the SSIO PROM",
+        "file_id": 0,
+        "extensions": [
+          "rom"
+        ],
+        "user_selected": true,
+        "required": true,
+        "read_only": true,
+        "max_size": 524288
       }
     },
     {
@@ -346,8 +357,13 @@
       "size": 32,
       "required": true,
       "redistribution": "user_supplied",
-      "help": "May be supplied by the core package or generated locally using the MCR ROM builder.",
-      "sha256": "4962a47f67ce0cebc655026efed495eb17fc29e7072650ecab2cecc4f16c06dc"
+      "help": "Required 32-byte SSIO timing PROM (not game ROM). Supply your own matching file using --bios-dir; no archive or PROM bytes are bundled. Installed MCR core.json/files.json must confirm filename, size, and Rev4 bitstream.",
+      "sha256": "4962a47f67ce0cebc655026efed495eb17fc29e7072650ecab2cecc4f16c06dc",
+      "target_core": {
+        "id": "alanswx.MCR",
+        "bitstream": "MCR3-gamebub_rev4.bit",
+        "filename": "ssio.prom"
+      }
     },
     {
       "id": "ngpc-color-boot",
@@ -430,5 +446,6 @@
         "system/gamecom.boot.rom"
       ]
     }
-  ]
+  ],
+  "catalog_revision": 1
 }

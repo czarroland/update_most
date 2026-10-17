@@ -10,6 +10,8 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import platform
+import sys
 from pathlib import Path
 import tempfile
 import urllib.parse
@@ -110,6 +112,9 @@ def run(argv=None):
         "schema": 1, "created_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "mode": "metadata_only" if args.metadata_only else "download_sha256_extract_and_temporary_sd_install",
         "hardware": "gamebub_rev4", "real_handheld_tested": False,
+        "host_os": platform.system(), "host_os_release": platform.release(),
+        "python_version": platform.python_version(),
+        "execution_note": "Host-side archive audit only; does not verify connected SD or Game Bub operation.",
         "total": len(records), "passed": sum(r["status"] != "failed" for r in records),
         "failed": sum(r["status"] == "failed" for r in records), "entries": records,
     }

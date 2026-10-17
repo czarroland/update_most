@@ -205,7 +205,8 @@ def validate_bios_catalog(doc: dict):
                 name = target_core[field]
                 if not isinstance(name, str) or len(name) > 80 or len(normalize_zip_path(name).parts) != 1:
                     raise UpdaterError("Invalid target_core " + field)
-            if not target_core["bitstream"].endswith(".bit") or not target_core["filename"].endswith(".rom"):
+            if (not target_core["bitstream"].endswith(".bit") or
+                    PurePosixPath(target_core["filename"]).suffix.lower() not in (".rom", ".prom", ".bin", ".bios")):
                 raise UpdaterError("Unexpected target_core filename extension")
         if destination.casefold() in destinations:
             raise UpdaterError("Duplicate BIOS destination: " + destination)
@@ -723,7 +724,8 @@ def confirmed_core_bios_destination(sd: Path, item: dict) -> str | None:
         except ValueError:
             size = None
         if (size == item["size"] and entry.get("read_only") is True
-                and entry.get("user_selected") is not True):
+                and entry.get("user_selected") is not True and
+                (not item.get("required", False) or entry.get("optional") is False)):
             matches.append(entry)
     if len(matches) != 1:
         return None
