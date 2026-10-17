@@ -16,6 +16,11 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 - Handles BIOS paths, user-supplied BIOS imports, and selected MiSTer community BIOS database entries.
 - Preserves unrelated saves and ROM files. Does **not** format a card, download games, or flash the handheld firmware.
 - Allows a local catalog (default) or explicitly supplied HTTPS catalog.
+- Combines separately identified community databases with conflict checks; an interactive menu saves preferences on the selected card.
+- Checks available versions without package downloads, verifies tracked files, restores pre-update snapshots, and removes only verified managed core files.
+- Reuses SHA-256-verified release packages from an SD-card cache and checks free space before installation.
+- Separately downloads the official stable Rev4 UF2 or the pinned v1.1-beta2 core-loading UF2 to a computer folder; firmware is never flashed during a core update.
+- Retrieves pinned offline MCR and Universal ROM builders from the core authors for locally preparing user-owned MAME sets.
 - Runs offline unit tests on synthetic data. Includes a core archive verification utility.
 - Documents the MCR arcade ROM selection and validates its separately supplied SSIO timing PROM against installed core metadata. Does not retrieve games or arcade PROMs.
 
@@ -24,6 +29,40 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 Python 3.9 or later, a computer with Internet access for core downloads, and a Game Bub-compatible microSD card. **Back up the card before the first development-build run.** Firmware supporting SD-card core loading is required for third-party cores; this program does not install it.
 
 ## Usage
+
+### Interactive menu
+
+Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a core browser, BIOS management, verification, restore, uninstall, and settings. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
+
+The menu's detection is a convenience, not proof that a selected drive is an SD card. Confirm the path before choosing an update. A new card still requires an explicit `--sd ... --init` once.
+
+### Firmware needed for third-party cores
+
+The official stable release is currently v1.0.2. The [NES core author's README](https://github.com/danisla/gamebub-nes#install) identifies **v1.1-beta2 or newer** as the first Rev4 firmware that lists SD-card cores, and the [NES v1.0.0 release](https://github.com/danisla/gamebub-nes/releases/tag/v1.0.0) carries `gamebub-rev4_v1.1-beta2.uf2`. The same UF2 and SHA-256 appear in the [SNES author's release](https://github.com/danisla/gamebub-snes/releases/tag/v1.0.0). Update_Most pins that beta asset to SHA-256 `7c9ae9f4e0a80b59bcb7abc6baa8a3e7379ae14b5259b7bec76e6b0e559f4937`.
+
+```sh
+python3 update_most.py --firmware-check --firmware-channel core-loading-beta
+python3 update_most.py --firmware-download ~/Downloads --firmware-channel core-loading-beta
+```
+
+The program verifies the GitHub release digest and UF2 block structure before saving the file. The stable channel remains separately available with `--firmware-channel stable`. Follow the [Game Bub USB firmware update procedure](https://docs.gamebub.net/user-guide/firmware-updates/) to install a selected UF2; the SD updater cannot read the handheld's installed firmware version from the card. `--check-only` reads each GitHub core README and prints its firmware notes alongside the catalog requirement. Enter the version shown in **Settings → About** to get a compatibility report:
+
+```sh
+python3 update_most.py --sd /Volumes/GAMEBUB --check-only --installed-firmware v1.1-beta2
+```
+
+The interactive menu can save that reported version in the card's settings. If it is unknown, the check says so instead of assuming that stable firmware can load third-party cores.
+
+### Arcade ROM preparation
+
+```sh
+python3 update_most.py --arcade-builder mcr --output ~/Downloads
+python3 update_most.py --arcade-builder universal --output ~/Downloads
+python3 update_most.py --sd /Volumes/GAMEBUB --arcade-import ~/Downloads/MCR-GameBub-ROMs.zip --arcade-system mcr
+python3 update_most.py --sd /Volumes/GAMEBUB --arcade-import ~/Downloads/Universal-GameBub-ROMs.zip --arcade-system universal
+```
+
+The builder commands save SHA-256-pinned, self-contained offline tools published by the [MCR](https://github.com/alanswx/MCR_GameBub/tree/main/web) and [Universal](https://github.com/alanswx/Universal_GameBub/tree/main/web) core authors. Open the saved HTML locally, supply your own matching MAME ZIPs, and export its SD-folder ZIP. The import commands verify each prepared `.rom` image against the pinned [game manifest](databases/arcade_images.json) before placing it under `roms/MCR` or `roms/Universal`. Existing differing files are preserved. An included MCR timing PROM is accepted only when it matches the pinned checksum and the installed core confirms its destination. The builders run locally and do not upload the user's files. Update_Most does not provide game ROMs.
 
 ### macOS or Linux
 
@@ -37,6 +76,16 @@ python3 update_most.py --list
 
 # Check planned changes without writing files
 ./update_most.sh --sd /Volumes/GAMEBUB --dry-run
+
+# Check versions without downloading ZIPs or writing to the card
+./update_most.sh --sd /Volumes/GAMEBUB --check-only
+
+# Verify all files recorded by Update_Most
+./update_most.sh --sd /Volumes/GAMEBUB --verify-installation
+
+# Restore a prior managed version or remove one managed core
+./update_most.sh --sd /Volumes/GAMEBUB --restore-core NES
+./update_most.sh --sd /Volumes/GAMEBUB --uninstall-core NES
 ```
 
 On Linux the SD mount path will differ, for example `/run/media/$USER/GAMEBUB`. Only use `--init` when preparing a previously unrecognized card. The updater does not format storage.
@@ -75,6 +124,10 @@ python3 update_most.py --sd /Volumes/GAMEBUB \
 ```
 
 The URL above references the current `main` catalog in this repository. Alternatively, the same repository catalog can be selected with `--catalog-track github`; `--catalog-track bundled` is the default. Selecting GitHub means trusting future catalog changes on the maintainer's main branch. The client validates the document and each downloaded core archive, but **the catalog itself is not yet signed or pinned to a fixed revision**.
+
+Additional databases can be enabled with repeatable `--database /path/to/database.json` or `--database https://...` options, or through menu settings. Each additional schema-1 catalog needs a stable `database_id`; duplicate database IDs, core IDs, BIOS IDs, and BIOS destinations are rejected before updating. Local custom databases are reviewed by their user; remote database URLs are trust decisions because they can direct future downloads. For one core, use `--core ID`.
+
+Restore requires a backup created by this version after an earlier managed install. Older backups have no restore manifest. Restore and uninstall refuse locally modified managed files, and uninstall leaves untracked ROMs, saves, and other user files in place. Update checks resolve release metadata but do not prove a release ZIP is valid or that a bitstream runs on hardware.
 
 Catalog entries require attribution, a documented upstream source and a compatible Game Bub target. Run the catalog validator before submitting changes:
 

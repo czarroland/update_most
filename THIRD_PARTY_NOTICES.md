@@ -29,6 +29,12 @@ GPL-3.0 project sources must not be copied without a provenance and license revi
 
 The catalog stores links and facts about release packages; it does not embed FPGA core RTL or authorize copying games. External FPGA release ZIPs remain subject to each author's terms and any bundled dependency licenses. Version labels in catalog entries are not universal indicators of hardware maturity.
 
+### Firmware and arcade source references added for management workflows
+
+- The official stable UF2 is fetched from [elipsitz/gamebub releases](https://github.com/elipsitz/gamebub/releases) and checked against GitHub's asset digest and UF2 structure. The v1.1-beta2 core-loading UF2 is fetched from [danisla/gamebub-nes v1.0.0](https://github.com/danisla/gamebub-nes/releases/tag/v1.0.0), also listed with the same SHA-256 in [danisla/gamebub-snes v1.0.0](https://github.com/danisla/gamebub-snes/releases/tag/v1.0.0). No UF2 bytes are committed here.
+- Update_Most offers SHA-256-pinned, unmodified offline HTML builders from [MCR_GameBub commit a47b413](https://github.com/alanswx/MCR_GameBub/commit/a47b413b533e750978761d52efa4fdf4c278e2cb) and [Universal_GameBub commit d76c093](https://github.com/alanswx/Universal_GameBub/commit/d76c093bf77ecaa49ea54657d71cdc31a22797fd). The HTML is downloaded directly from the authors' repositories to the user's selected folder; it is not vendored in this repository.
+- [databases/arcade_images.json](databases/arcade_images.json) contains only game names, output filenames, sizes and checksums extracted from those same authors' `gamedb/games.json` files at the pinned commits. It contains no game, PROM, sample or builder code bytes. The checksums identify exact compatible image revisions; they do not grant rights to obtain or distribute game content.
+
 ## Source inclusion policy
 
 1. Before importing a third-party component, document **author, repository, source URL, exact commit/tag, original license, affected files, and use case**.
