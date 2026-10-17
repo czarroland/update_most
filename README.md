@@ -17,6 +17,7 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 - Preserves unrelated saves and ROM files. Does **not** format a card, download games, or flash the handheld firmware.
 - Allows a local catalog (default) or explicitly supplied HTTPS catalog.
 - Runs offline unit tests on synthetic data. Includes a core archive verification utility.
+- Documents the MCR arcade ROM selection and validates its separately supplied SSIO timing PROM against installed core metadata. Does not retrieve games or arcade PROMs.
 
 ## Requirements
 
@@ -87,7 +88,7 @@ python3 update_most.py --list
 python3 verify_all.py --help
 ```
 
-GitHub Actions runs the checks on macOS, Linux, and Windows. Unit tests use synthetic archives and mocked downloads; they are **not** hardware tests or proof of real remote server availability. Independent ZIP-download verification and Game Bub Rev4 smoke tests remain open in [issue #3](https://github.com/czarroland/update_most/issues/3).
+GitHub Actions runs the checks on macOS, Linux, and Windows. A separate **manually triggered** [core archive audit workflow](.github/workflows/verify-core-archives.yml) can verify release metadata or download and hash-check actual core ZIPs on a GitHub-hosted runner. Neither mode checks physical Game Bub behavior. See [MCR arcade requirements](docs/mcr-arcade.md). Unit tests use synthetic archives and mocked downloads; they are **not** hardware tests or proof of real remote server availability. Independent ZIP-download verification and Game Bub Rev4 smoke tests remain open in [issue #3](https://github.com/czarroland/update_most/issues/3).
 
 ## License and project status
 

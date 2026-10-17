@@ -28,6 +28,18 @@ class TestCatalogProvenance(unittest.TestCase):
         self.assertTrue(any("not independently verified" in e for e in errors))
         self.assertFalse(warnings)
 
+    def test_missing_catalog_revision_rejected(self):
+        doc = copy.deepcopy(self.live_catalog)
+        del doc["catalog_revision"]
+        errors, _ = validator.validate_records(doc)
+        self.assertTrue(any("catalog_revision" in e for e in errors))
+
+    def test_catalog_revision_boolean_rejected(self):
+        doc = copy.deepcopy(self.live_catalog)
+        doc["catalog_revision"] = True
+        errors, _ = validator.validate_records(doc)
+        self.assertTrue(any("catalog_revision" in e for e in errors))
+
     def test_missing_attribution_rejected(self):
         doc = copy.deepcopy(self.live_catalog)
         del doc["cores"][0]["upstream"]

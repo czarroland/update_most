@@ -1,6 +1,6 @@
 # Catalog metadata and source attribution
 
-Update_Most uses an application-specific JSON catalog with `schema: 1`. The original format is processed by `update_most.load_catalog`. An additional offline provenance check is provided by `validate_catalog.py`.
+Update_Most uses an application-specific JSON catalog with `schema: 1` and an independently incremented `catalog_revision` (a positive integer). The schema denotes parser compatibility; `catalog_revision` denotes reviewed catalog changes. The original format is processed by `update_most.load_catalog`. An additional offline provenance check is provided by `validate_catalog.py`.
 
 ## Validate before submitting
 
@@ -48,6 +48,8 @@ The `source` object supports a GitHub release or a SHA-256-pinned direct HTTPS U
 BIOS requirements have their own `bios` array and paths. Some entries reference MiSTer's **MIT-licensed** BiosDB_MiSTer index. That does not imply firmware copyright holders have allowed distribution. Never attach commercial ROMs or BIOS dumps in issues or pull requests. See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 ## Changing database formats
+
+The application loader continues to accept historical `schema: 1` catalogs without a `catalog_revision` field for backward compatibility. New community catalog contributions must set `catalog_revision` to a positive integer; increment it when publishing revised source listings or other reviewable metadata. A revision bump does not independently update the Python client or authorize new source repositories. Do not repurpose core IDs or change required install paths silently. Any incompatible schema change needs a new parser schema, explicit migration tests, and updated tooling.
 
 Do not silently modify the `schema` number, core IDs, or update state conventions. New catalog/database formats require migration code, tests and a versioning document. Multiple independent databases are planned, not implemented.
 

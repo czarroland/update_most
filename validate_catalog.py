@@ -22,6 +22,9 @@ def validate_records(catalog: dict, require_verified_licenses: bool = False):
     """Return (errors, warnings). Does not contact GitHub or download content."""
     errors = []
     warnings = []
+    revision = catalog.get("catalog_revision")
+    if not isinstance(revision, int) or isinstance(revision, bool) or revision < 1:
+        errors.append("catalog_revision must be a positive integer independent of schema")
     if not isinstance(catalog.get("name"), str) or not catalog["name"].strip():
         errors.append("Catalog needs a nonempty name")
     seen_repos = {}
@@ -63,6 +66,25 @@ def validate_records(catalog: dict, require_verified_licenses: bool = False):
                     errors.append(f"{prefix}: homepage does not match source.repo {repo}")
             # Same repo may have multiple cores, but catalog displays this for audit.
             seen_repos.setdefault(repo.casefold(), []).append(core["id"])
+        media = core.get("arcade_media")
+        if media is not None:
+            if (not isinstance(media, dict) or
+                    set(media) != {"description", "file_id", "extensions", "user_selected",
+                                   "required", "read_only", "max_size"}):
+                errors.append(f"{prefix}: arcade_media fields are incomplete or unexpected")
+            elif (not isinstance(media["description"], str) or not media["description"].strip() or
+                    not isinstance(media["file_id"], int) or isinstance(media["file_id"], bool) or
+                    media["file_id"] < 0 or
+                    not isinstance(media["extensions"], list) or not media["extensions"] or
+                    any(not isinstance(ext, str) or not ext.isascii() or
+                        not ext.isalnum() or ext.lower() != ext or len(ext) > 8
+                        for ext in media["extensions"]) or
+                    len(set(media["extensions"])) != len(media["extensions"]) or
+                    media["user_selected"] is not True or media["required"] is not True or
+                    media["read_only"] is not True or
+                    not isinstance(media["max_size"], int) or isinstance(media["max_size"], bool) or
+                    not (1 <= media["max_size"] <= 8 * 1024 * 1024)):
+                errors.append(f"{prefix}: invalid user-supplied arcade_media specification")
         firmware = core.get("requires_firmware")
         if firmware is not None and (not isinstance(firmware, str) or not firmware.strip()):
             errors.append(f"{prefix}: requires_firmware must be nonempty text if supplied")

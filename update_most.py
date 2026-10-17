@@ -192,20 +192,21 @@ def validate_bios_catalog(doc: dict):
         # files.json on the mounted SD must explicitly confirm the target.
         target_core = item.get("target_core")
         if target_core is not None:
+            if not isinstance(target_core, dict) or set(target_core) != {"id", "bitstream", "filename"}:
+                raise UpdaterError("target_core needs id, bitstream, and filename")
             if core_id is not None:
                 if target_core.get("id") != core_id or tuple(parts) != ("cores", core_id, target_core.get("filename")):
                     raise UpdaterError("Verified core BIOS destination must match target_core ID and filename")
             elif parts[0] != "system":
                 raise UpdaterError("Provisional target_core BIOS must be under system/")
-            if not isinstance(target_core, dict) or set(target_core) != {"id", "bitstream", "filename"}:
-                raise UpdaterError("target_core needs id, bitstream, and filename")
             if not ID_RE.fullmatch(str(target_core["id"])) or len(target_core["id"]) > 32:
                 raise UpdaterError("Invalid target_core ID")
             for field in ("bitstream", "filename"):
                 name = target_core[field]
                 if not isinstance(name, str) or len(name) > 80 or len(normalize_zip_path(name).parts) != 1:
                     raise UpdaterError("Invalid target_core " + field)
-            if not target_core["bitstream"].endswith(".bit") or not target_core["filename"].endswith(".rom"):
+            if (not target_core["bitstream"].endswith(".bit") or
+                    PurePosixPath(target_core["filename"]).suffix.lower() not in (".rom", ".prom", ".bin", ".bios")):
                 raise UpdaterError("Unexpected target_core filename extension")
         if destination.casefold() in destinations:
             raise UpdaterError("Duplicate BIOS destination: " + destination)
@@ -723,7 +724,8 @@ def confirmed_core_bios_destination(sd: Path, item: dict) -> str | None:
         except ValueError:
             size = None
         if (size == item["size"] and entry.get("read_only") is True
-                and entry.get("user_selected") is not True):
+                and entry.get("user_selected") is not True and
+                (not item.get("required", False) or entry.get("optional") is False)):
             matches.append(entry)
     if len(matches) != 1:
         return None
