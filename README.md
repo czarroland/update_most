@@ -48,6 +48,12 @@ On Linux the SD mount path will differ, for example `/run/media/$USER/GAMEBUB`. 
 .\update_most.ps1 --sd 'E:\'
 ```
 
+An explicitly selected SD card mounted at a non-system drive root (for example
+`E:\\`) is supported. The system drive, the current user's home drive,
+Python's installation drive, Windows' installation drive, and network-share
+roots are refused. **Confirm the drive letter** before using `--init`;
+initialization creates directories but does not format the card.
+
 ### Experimental releases and BIOS handling
 
 ```sh
