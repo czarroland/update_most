@@ -71,6 +71,24 @@ class TestUpdateMost(unittest.TestCase):
                  adopt=True, force=False, dry_run=False)
         self.assertEqual(json.loads((root / "core.json").read_text())["metadata"]["id"], CORE_ID)
 
+    def test_matching_manual_core_becomes_managed_without_replacement(self):
+        contents = u.unpack_core(package(), CORE_ID, "gamebub_rev4")
+        root = self.sd / "cores" / CORE_ID
+        root.mkdir()
+        for rel, content in contents.items():
+            target = root / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+        extra = root / "user-save.dat"
+        extra.write_bytes(b"save")
+        before = {rel: (root / rel).stat().st_mtime_ns for rel in contents}
+        u.deploy(self.sd, CORE_ID, contents, "v1", "hash", self.state,
+                 adopt=False, force=False, dry_run=False)
+        self.assertEqual(before, {rel: (root / rel).stat().st_mtime_ns for rel in contents})
+        self.assertEqual(extra.read_bytes(), b"save")
+        self.assertEqual(self.state["installed"][CORE_ID]["version"], "v1")
+        self.assertFalse((self.sd / ".update_most" / "backups" / CORE_ID).exists())
+
     def test_modified_managed_file_protected(self):
         contents = u.unpack_core(package(), CORE_ID, "gamebub_rev4")
         u.deploy(self.sd, CORE_ID, contents, "v1", "hash", self.state,

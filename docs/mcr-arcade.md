@@ -20,11 +20,12 @@ The required PROM has an existing SHA-256 pin in the catalog:
 read-only mandatory `ssio.prom` declaration. Missing/mismatched metadata
 results in an error rather than an unverified installation.
 
-Supply a matching, legally obtained `ssio.prom` via `--bios-dir`. The
-updater does **not** fetch this PROM, fetch game images, build game ROMs, or
-alter a user's arcade ROM collection. Its existing checksum validation
-rejects an incorrect PROM and its normal overwrite protection preserves
-pre-existing files.
+The BIOS step fetches the PROM from the pinned MAME 0.209 `midssio.zip` on
+Archive.org when the file is missing. It checks the ZIP SHA-256 and the
+extracted PROM SHA-256 before installation. A matching local `ssio.prom`
+supplied with `--bios-dir` takes priority. The arcade step separately builds
+checksum-verified MCR images from pinned MAME ZIPs. Existing differing files
+are preserved rather than replaced.
 
 The user's `files.json` establishes the two file interface entries. The
 Rev4 bitstream name and core ID were separately checked against

@@ -1519,10 +1519,25 @@ def deploy(sd: Path, core_id: str, files: dict, version: str, package_sha: str,
             if not target.is_file():
                 raise UpdaterError("Non-file blocks core installation: " + str(target))
             current = file_sha(target)
-            if rel not in tracked and not adopt:
+            if rel not in tracked and not adopt and current != sha256(content):
                 raise UpdaterError(f"Existing, unmanaged {core_id}/{rel}; refuse overwrite (use --adopt to back it up)")
             if rel in tracked and current != tracked[rel] and not force:
                 raise UpdaterError(f"Locally modified {core_id}/{rel}; refuse overwrite (use --force to back it up)")
+    if not had_previous and files and all(
+        (base.joinpath(*PurePosixPath(rel).parts)).is_file()
+        and file_sha(base.joinpath(*PurePosixPath(rel).parts)) == sha256(content)
+        for rel, content in files.items()
+    ):
+        if dry_run:
+            print(f"  [DRY RUN] Would record matching existing files in cores/{core_id}")
+            return
+        state["installed"][core_id] = {
+            "version": version, "package_sha256": package_sha,
+            "files": {k: sha256(v) for k, v in files.items()}, "updated_at": utc_now()
+        }
+        write_state(sd, state)
+        print(f"  Matched existing release: cores/{core_id} ({len(files)} files; no files replaced)")
+        return
     if dry_run:
         print(f"  [DRY RUN] Would install {len(files)} files in cores/{core_id} (existing files preserved/backed up)")
         return

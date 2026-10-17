@@ -12,8 +12,8 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 
 - Reads a JSON catalog of reviewed core release sources.
 - Downloads GitHub release ZIP archives, checks release SHA-256 values where available, and validates Game Bub core metadata and hardware targets.
-- Installs to `/cores/<core-id>/`, backs up managed files before replacement, and keeps a record of managed files.
-- Handles BIOS paths, local BIOS imports, selected MiSTer community BIOS database entries, and pinned Archive.org ColecoVision OS-7 and Macintosh LC ROMs.
+- Installs to `/cores/<core-id>/`, backs up managed files before replacement, records already matching manual installs without replacing files, and keeps a record of managed files.
+- Handles BIOS paths, local BIOS imports, selected MiSTer community BIOS database entries, and pinned Archive.org ColecoVision OS-7, Macintosh LC, and MCR SSIO files.
 - Preserves unrelated saves and ROM files. Does **not** format a card or flash the handheld firmware.
 - Allows a local catalog (default) or explicitly supplied HTTPS catalog.
 - Combines separately identified community databases with conflict checks; an interactive menu saves preferences on the selected card.
@@ -65,7 +65,7 @@ python3 update_most.py --sd /Volumes/GAMEBUB --arcade-auto
 python3 update_most.py --sd /Volumes/GAMEBUB --arcade-auto --arcade-system universal --arcade-game ladybug
 ```
 
-The normal **Update everything** action runs this automatically after core and BIOS updates for installed MCR and Universal cores. The first run downloads only needed source ZIPs from the [MAME 0.209 Archive.org collection](https://archive.org/details/MAME209RomsOnlyMerged) and three files from its [newer merged collection](https://archive.org/details/mame-roms-merged_). Every source ZIP is checked against its pinned Archive.org SHA-1 and every prepared image against the [core authors' output hashes](databases/arcade_images.json). We verified all 19 MCR and 57 Universal images. The MCR timing PROM is installed automatically only when the installed core confirms its destination. Existing differing card files are preserved. Use `--skip-arcade` to omit this step in an Update everything run.
+The normal **Update everything** action runs this automatically after core and BIOS updates for installed MCR and Universal cores. The first run downloads only needed source ZIPs from the [MAME 0.209 Archive.org collection](https://archive.org/details/MAME209RomsOnlyMerged) and three files from its [newer merged collection](https://archive.org/details/mame-roms-merged_). Every source ZIP is checked against its pinned Archive.org SHA-1 and every prepared image against the [core authors' output hashes](databases/arcade_images.json). We verified all 19 MCR and 57 Universal images. The BIOS step fetches the MCR timing PROM first, and only when the installed core confirms its destination. Existing differing card files are preserved. Use `--skip-arcade` to omit arcade image preparation.
 
 The offline builder and prepared ZIP import are still available:
 

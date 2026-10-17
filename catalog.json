@@ -369,9 +369,15 @@
       "destination": "cores/alanswx.MCR/ssio.prom",
       "size": 32,
       "required": true,
-      "redistribution": "user_supplied",
-      "help": "Required 32-byte SSIO timing PROM (not game ROM). Supply your own matching file using --bios-dir; no archive or PROM bytes are bundled. Installed MCR core.json/files.json must confirm filename, size, and Rev4 bitstream.",
+      "redistribution": "community_unverified",
+      "help": "Required 32-byte SSIO timing PROM (not game ROM). Downloaded from a pinned Archive.org MAME ZIP when the installed MCR core confirms its filename, size, and Rev4 bitstream. A matching local file supplied with --bios-dir also works; no PROM bytes are bundled.",
       "sha256": "4962a47f67ce0cebc655026efed495eb17fc29e7072650ecab2cecc4f16c06dc",
+      "source": {
+        "type": "archive_mame_zip",
+        "url": "https://archive.org/download/MAME209RomsOnlyMerged/midssio.zip",
+        "sha256": "7514fa7c4bf6045fec1a573a8a2e4d0d73984b4f6c73e76ea67e69f38a43cf9b",
+        "archive_member": "82s123.12d"
+      },
       "target_core": {
         "id": "alanswx.MCR",
         "bitstream": "MCR3-gamebub_rev4.bit",
