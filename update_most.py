@@ -406,6 +406,11 @@ def unpack_core(package: bytes, core_id: str, hardware: str) -> dict[str, bytes]
         return files
 
 
+def explicit_windows_drive_root(path: str) -> bool:
+    """Only accept an absolute drive-letter root, not a drive-relative slash."""
+    return isinstance(path, str) and bool(re.fullmatch(r"[A-Za-z]:[\\\\/]", path))
+
+
 def protected_windows_drive_root(drive: str, *, system_drive: str = "C:",
                                  home_drive: str = "", python_drive: str = "",
                                  windows_drive: str = "") -> bool:
@@ -423,6 +428,7 @@ def protected_windows_drive_root(drive: str, *, system_drive: str = "C:",
 
 
 def ensure_safe_root(sd: Path, init: bool, dry_run: bool):
+    selected_path = str(sd)  # Preserve whether the user named a drive explicitly.
     if not sd.is_dir():
         raise UpdaterError("SD path does not exist or is not a directory: " + str(sd))
     if sd.is_symlink():
@@ -433,12 +439,13 @@ def ensure_safe_root(sd: Path, init: bool, dry_run: bool):
     if sd == Path(sd.anchor):
         # The Unix root, a Windows system drive, and a UNC root are unsafe.
         # Explicitly selected non-system SD drive roots (for example E:\\) are allowed.
-        if os.name != "nt" or protected_windows_drive_root(
+        if (os.name != "nt" or not explicit_windows_drive_root(selected_path) or
+                protected_windows_drive_root(
                 sd.drive,
                 system_drive=os.environ.get("SystemDrive") or "C:",
                 home_drive=Path.home().drive,
                 python_drive=Path(sys.executable).drive,
-                windows_drive=Path(os.environ.get("windir", "C:\\Windows")).drive):
+                windows_drive=Path(os.environ.get("windir", "C:\\Windows")).drive)):
             raise UpdaterError("Refusing to operate on OS, home, or network root")
     if (sd / "cores").is_symlink() or (sd / ".update_most").is_symlink():
         raise UpdaterError("SD management directories must not be symlinks")

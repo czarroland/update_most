@@ -15,6 +15,13 @@ class TestDriveRootSafety(unittest.TestCase):
         self.assertFalse(u.protected_windows_drive_root(
             "E:", system_drive="C:", home_drive="C:", python_drive="C:", windows_drive="C:"))
 
+    def test_explicit_drive_root_required(self):
+        self.assertTrue(u.explicit_windows_drive_root("E:\\\\"))
+        self.assertTrue(u.explicit_windows_drive_root("E:/"))
+        for path in ("\\\\", "/", "\\\\host\\share", "E:", "", None):
+            with self.subTest(path=path):
+                self.assertFalse(u.explicit_windows_drive_root(path))
+
     def test_system_drive_rejected(self):
         self.assertTrue(u.protected_windows_drive_root(
             "D:", system_drive="D:", home_drive="C:", python_drive="C:"))
