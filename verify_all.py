@@ -11,7 +11,6 @@ import datetime as dt
 import hashlib
 import json
 import platform
-import sys
 from pathlib import Path
 import tempfile
 import urllib.parse

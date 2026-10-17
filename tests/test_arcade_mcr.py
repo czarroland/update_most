@@ -131,6 +131,13 @@ class TestArcadeMCRProm(unittest.TestCase):
         self.assertEqual((self.root/"ssio.prom").read_bytes(),b"x"*32)
         self.assertEqual(existing.read_bytes(),b"dummy game bytes - synthetic only")
 
+    def test_nonobject_target_core_rejected_cleanly(self):
+        doc=copy.deepcopy(self.catalog)
+        item=next(x for x in doc["bios"] if x["id"]=="mcr-ssio-prom")
+        item["target_core"]="not an object"
+        with self.assertRaises(u.UpdaterError):
+            u.validate_bios_catalog(doc)
+
     def test_executable_bios_target_rejected(self):
         doc=copy.deepcopy(self.catalog)
         item=next(x for x in doc["bios"] if x["id"]=="mcr-ssio-prom")
