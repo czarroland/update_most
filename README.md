@@ -67,7 +67,7 @@ python3 update_most.py --sd /Volumes/GAMEBUB \
   --catalog https://raw.githubusercontent.com/czarroland/update_most/main/catalog.json
 ```
 
-The URL above references `main` **after** the current draft pull request is merged. Alternatively, the same repository catalog can be selected with `--catalog-track github`; `--catalog-track bundled` is the default. Selecting GitHub means trusting future catalog changes on the maintainer's main branch. The client validates the document and each downloaded core archive, but **the catalog itself is not yet signed or pinned to a fixed revision**.
+The URL above references the current `main` catalog in this repository. Alternatively, the same repository catalog can be selected with `--catalog-track github`; `--catalog-track bundled` is the default. Selecting GitHub means trusting future catalog changes on the maintainer's main branch. The client validates the document and each downloaded core archive, but **the catalog itself is not yet signed or pinned to a fixed revision**.
 
 Catalog entries require attribution, a documented upstream source and a compatible Game Bub target. Run the catalog validator before submitting changes:
 
