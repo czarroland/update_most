@@ -29,6 +29,7 @@ import zipfile
 
 USER_AGENT = "Update_Most/0.7 (Game Bub community updater)"
 MISTER_BIOS_CSV = "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/main/external_files.csv"
+COMMUNITY_CATALOG_URL = "https://raw.githubusercontent.com/czarroland/update_most/main/catalog.json"
 MISTER_BIOS_ARCHIVE = "https://archive.org/download/mister_bios_db/"
 MAX_MISTER_CSV = 512 * 1024
 MD5_RE = re.compile(r"^[0-9a-fA-F]{32}$")
@@ -856,7 +857,9 @@ def manage_bios(sd: Path, catalog: dict, directory: Path | None, dry_run: bool,
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Update_Most: prepare a Game Bub microSD from a curated community database")
     parser.add_argument("--sd", help="Path to mounted Game Bub microSD card ROOT (never a subfolder)")
-    parser.add_argument("--catalog", default=str(Path(__file__).with_name("catalog.json")), help="Local JSON path or HTTPS catalog URL")
+    parser.add_argument("--catalog", help="Explicit local JSON path or HTTPS catalog URL (overrides --catalog-track)")
+    parser.add_argument("--catalog-track", choices=["bundled", "github"], default="bundled",
+                        help="bundled=local snapshot (default); github=current community main-branch catalog, opt-in")
     parser.add_argument("--channel", choices=["stable", "beta"], default="stable", help="Beta installs both stable and beta entries")
     parser.add_argument("--hardware", choices=["gamebub_rev4", "gamebub_rev2"], default="gamebub_rev4")
     parser.add_argument("--list", action="store_true", help="List curated releases without SD card or downloads")
@@ -881,7 +884,10 @@ def main(argv=None):
             args.sd = input("Game Bub SD-card root path (e.g. /Volumes/GAMEBUB or E:\\): ").strip().strip('"')
         if not args.sd:
             parser.error("--sd required (or run interactively and enter SD path)")
-    catalog = load_catalog(args.catalog)
+    catalog_location = (args.catalog if args.catalog is not None else
+                        COMMUNITY_CATALOG_URL if args.catalog_track == "github" else
+                        str(Path(__file__).with_name("catalog.json")))
+    catalog = load_catalog(catalog_location)
     print(f"Update_Most | {catalog.get('name', 'Game Bub community catalog')} | hardware {args.hardware}")
     if args.list_bios:
         for b in catalog.get("bios", []):
