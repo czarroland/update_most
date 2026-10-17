@@ -1,0 +1,56 @@
+# Catalog metadata and source attribution
+
+Update_Most uses an application-specific JSON catalog with `schema: 1`. The original format is processed by `update_most.load_catalog`. An additional offline provenance check is provided by `validate_catalog.py`.
+
+## Validate before submitting
+
+```sh
+python3 validate_catalog.py --catalog catalog.json
+python3 -m unittest discover -s tests -v
+```
+
+This checks local JSON syntax and many metadata constraints without downloading anything. It **does not** establish that a release exists, its ZIP is safe, its FPGA bitstream runs on hardware, or its author permits a particular use.
+
+## Core record requirements
+
+```json
+{
+  "id": "Example.Core",
+  "name": "Example Core",
+  "category": "Console",
+  "channel": "beta",
+  "enabled": false,
+  "hardware": ["gamebub_rev4"],
+  "requires_firmware": "Relevant tested firmware version",
+  "source": {
+    "type": "github_release",
+    "repo": "developer/repo-name",
+    "asset": "example-v*.zip",
+    "tag": "optional-tag"
+  },
+  "homepage": "https://github.com/developer/repo-name",
+  "upstream": {
+    "author": "Original author and contributors",
+    "license": "license not verified",
+    "reference_only": true
+  }
+}
+```
+
+`reference_only: true` means Update_Most is linking to **another developer's release**, rather than incorporating that project's source into the updater repository. Listing a core does **not** relicense its code or binaries.
+
+If a core's license cannot be confirmed from its actual repository and files, use `license not verified`. Validation warns by default; `--require-verified-licenses` treats such warnings as errors.
+
+The `source` object supports a GitHub release or a SHA-256-pinned direct HTTPS URL. The main updater validates the source and FPGA metadata before installation. Stable/beta channel labels describe catalog update selection, not necessarily the upstream developer's maturity or hardware-testing status.
+
+## BIOS records
+
+BIOS requirements have their own `bios` array and paths. Some entries reference MiSTer's **MIT-licensed** BiosDB_MiSTer index. That does not imply firmware copyright holders have allowed distribution. Never attach commercial ROMs or BIOS dumps in issues or pull requests. See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
+
+## Changing database formats
+
+Do not silently modify the `schema` number, core IDs, or update state conventions. New catalog/database formats require migration code, tests and a versioning document. Multiple independent databases are planned, not implemented.
+
+## AI and license disclosure
+
+Changes submitted with AI help must identify the tool, affected files and testing performed. Third-party code adaptation must identify the original authors, license, commit and files. Project-authored Update_Most code is GPL-3.0-only.
