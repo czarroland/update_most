@@ -456,12 +456,12 @@ class TestUpdateMost(unittest.TestCase):
         def runner(args, **kwargs):
             calls.append(args)
             return subprocess.CompletedProcess(args, 0, "Disk ejected", "")
-        with patch.object(u, "mac_card_info", return_value=None), patch.object(u.os, "sync"):
+        with patch.object(u, "mac_card_info", return_value=None), patch.object(u.os, "sync", create=True):
             with self.assertRaisesRegex(u.UpdaterError, "mounted external/removable"):
                 u.eject_sd_card(self.sd, runner=runner, platform="darwin")
         self.assertEqual(calls, [])
         info = {"removable": True, "filesystem": "Windows_FAT_32", "scheme": "FDisk_partition_scheme"}
-        with patch.object(u, "mac_card_info", return_value=info), patch.object(u.os, "sync") as sync:
+        with patch.object(u, "mac_card_info", return_value=info), patch.object(u.os, "sync", create=True) as sync:
             u.eject_sd_card(self.sd, runner=runner, platform="darwin")
             sync.assert_called_once()
         self.assertEqual(calls, [["diskutil", "eject", str(self.sd.resolve())]])
@@ -482,7 +482,7 @@ class TestUpdateMost(unittest.TestCase):
             else:
                 value = "done"
             return subprocess.CompletedProcess(args, 0, value, "")
-        with patch.object(u, "mac_card_info", return_value=None), patch.object(u.os, "sync"):
+        with patch.object(u, "mac_card_info", return_value=None), patch.object(u.os, "sync", create=True):
             u.eject_sd_card(self.sd, runner=runner, platform="linux")
         self.assertEqual(calls[-2:], [["udisksctl", "unmount", "-b", "/dev/sdb1"],
                                       ["udisksctl", "power-off", "-b", "/dev/sdb"]])
