@@ -33,11 +33,13 @@ Python 3.9 or later, a computer with Internet access for core downloads, and a G
 
 ### Interactive menu
 
-Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a category-filtered core browser, BIOS management, a card health report, verification, restore, uninstall, and settings. The browser shows the installed version, firmware requirement, current update/README check, and author release notes before installing a selected core. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
+Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a category-filtered core browser, BIOS management, a card health report, verification, restore, uninstall, safe eject, and settings. The browser shows the installed version, firmware requirement, current update/README check, and author release notes before installing a selected core. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
 
 New cards default to the beta catalog channel so Update everything includes third-party cores that require the v1.1 beta firmware. This does not change the handheld's firmware; use Settings to switch the catalog channel to stable if desired.
 
 On macOS the menu lists mounted external FAT32 cards, including cards without an Update_Most layout, and shows their size and partition scheme when disk metadata is available. It offers to create `cores`, `system`, and `roms` on a selected new card. The updater rejects writes to a macOS mounted volume when disk metadata shows a filesystem other than FAT32 or a partition table other than MBR. On other platforms, confirm the card format yourself using the [Game Bub card requirements](https://docs.gamebub.net/user-guide/playing-games/). Detection still requires you to select the destination; it never formats a drive.
+
+After Update everything, choose **Safely eject card** in the menu or run `python3 update_most.py --sd /path/to/card --eject`. The eject action requires a selected removable mount. It uses macOS `diskutil`, Linux `udisksctl`, or the Windows removable-drive Eject action and reports a failure if the operating system cannot release the card.
 
 ### Firmware needed for third-party cores
 

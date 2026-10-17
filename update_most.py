@@ -662,6 +662,62 @@ def detect_sd_cards() -> list[Path]:
     return candidates
 
 
+def eject_sd_card(sd: Path, runner=None, platform: str | None = None) -> None:
+    """Eject a selected removable mount after an update, never a guessed disk."""
+    sd = ensure_safe_root(sd, False, True)
+    runner = subprocess.run if runner is None else runner
+    platform = sys.platform if platform is None else platform
+
+    def command(args: list[str]) -> str:
+        try:
+            result = runner(args, capture_output=True, text=True, timeout=35, check=False)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise UpdaterError("Could not safely eject card: " + str(exc)) from exc
+        if result.returncode:
+            detail = (result.stderr or result.stdout or "device is still in use").strip()[:400]
+            raise UpdaterError("Could not safely eject card: " + detail)
+        return result.stdout.strip()
+
+    if platform == "darwin":
+        info = mac_card_info(sd)
+        if not info or not info["removable"]:
+            raise UpdaterError("Eject requires the selected mounted external/removable card")
+        os.sync()
+        command(["diskutil", "eject", str(sd)])
+    elif platform.startswith("linux"):
+        target = command(["findmnt", "-n", "-o", "TARGET", "--target", str(sd)])
+        source = command(["findmnt", "-n", "-o", "SOURCE", "--target", str(sd)])
+        if target != str(sd) or not source.startswith("/dev/"):
+            raise UpdaterError("Eject requires an exact mounted block-device root")
+        parent = command(["lsblk", "-n", "-o", "PKNAME", source])
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", parent):
+            raise UpdaterError("Could not identify the selected card's parent disk")
+        disk = "/dev/" + parent
+        disk_info = command(["lsblk", "-dn", "-o", "RM,TRAN", disk]).split()
+        if not disk_info or (disk_info[0] != "1" and "usb" not in disk_info[1:]):
+            raise UpdaterError("Eject requires a removable or USB disk")
+        os.sync()
+        command(["udisksctl", "unmount", "-b", source])
+        command(["udisksctl", "power-off", "-b", disk])
+    elif platform == "win32":
+        selected = str(sd)
+        if not explicit_windows_drive_root(selected):
+            raise UpdaterError("Eject requires a selected drive-letter root such as E:\\")
+        import ctypes
+        if ctypes.windll.kernel32.GetDriveTypeW(selected) != 2:
+            raise UpdaterError("Eject requires a removable Windows drive")
+        drive = selected[:2].upper()
+        script = ("$s=New-Object -ComObject Shell.Application; "
+                  f"$d=$s.Namespace(17).ParseName('{drive}'); "
+                  "if($null -eq $d){exit 2}; $d.InvokeVerb('Eject'); "
+                  f"for($i=0;$i -lt 10;$i++){{if(-not(Test-Path '{drive}\\')){{exit 0}}; "
+                  "Start-Sleep -Seconds 1}; exit 3")
+        command(["powershell", "-NoProfile", "-NonInteractive", "-Command", script])
+    else:
+        raise UpdaterError("Eject is not supported on this operating system")
+    print("Card safely ejected. It can now be removed: " + str(sd))
+
+
 def interactive_menu(sd_path: str | None):
     if not sys.stdin.isatty():
         raise UpdaterError("Interactive menu requires a terminal")
@@ -707,9 +763,13 @@ def interactive_menu(sd_path: str | None):
         print("10 Arcade ROM builder")
         print("11 Import prepared arcade ZIP  12 Card health report")
         print("13 Auto prepare arcade games from Archive.org")
+        print("14 Safely eject card")
         print("0 Exit")
         choice = input("Choose: ").strip()
         if choice == "0":
+            return 0
+        if choice == "14":
+            eject_sd_card(sd)
             return 0
         if choice == "9":
             print("Stable: official v1.0 series. Core-loading beta: v1.1-beta2 attached to the NES author release.")
@@ -1893,6 +1953,7 @@ def main(argv=None):
     actions.add_argument("--check-only", action="store_true", help="Check available core versions without downloading packages or writing to SD")
     actions.add_argument("--verify-installation", action="store_true", help="Check SHA-256 of every managed core file without changing the SD card")
     actions.add_argument("--health", action="store_true", help="Read-only core, BIOS, arcade, and firmware readiness report")
+    actions.add_argument("--eject", action="store_true", help="Safely eject the selected removable card")
     actions.add_argument("--uninstall-core", metavar="ID", help="Remove verified managed files for one core; preserve user files")
     actions.add_argument("--restore-core", metavar="ID", help="Restore one core from its latest pre-update backup")
     actions.add_argument("--firmware-check", action="store_true", help="Show the selected Rev4 firmware release")
@@ -1923,6 +1984,11 @@ def main(argv=None):
         firmware_version_key(args.installed_firmware)
     if args.menu:
         return interactive_menu(args.sd)
+    if args.eject:
+        if not args.sd:
+            parser.error("--eject requires --sd")
+        eject_sd_card(Path(args.sd).expanduser())
+        return 0
     if args.arcade_builder:
         if not args.output:
             parser.error("--arcade-builder requires --output")

@@ -5,6 +5,7 @@ import json
 import hashlib
 from pathlib import Path
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -449,6 +450,42 @@ class TestUpdateMost(unittest.TestCase):
             self.assertEqual(u.main(["--sd", str(self.sd), "--catalog", str(catalog),
                                      "--dry-run", "--skip-bios", "--skip-arcade"]), 0)
             arcade.assert_not_called()
+
+    def test_eject_requires_removable_mount_and_uses_diskutil(self):
+        calls = []
+        def runner(args, **kwargs):
+            calls.append(args)
+            return subprocess.CompletedProcess(args, 0, "Disk ejected", "")
+        with patch.object(u, "mac_card_info", return_value=None), patch.object(u.os, "sync"):
+            with self.assertRaisesRegex(u.UpdaterError, "mounted external/removable"):
+                u.eject_sd_card(self.sd, runner=runner, platform="darwin")
+        self.assertEqual(calls, [])
+        info = {"removable": True, "filesystem": "Windows_FAT_32", "scheme": "FDisk_partition_scheme"}
+        with patch.object(u, "mac_card_info", return_value=info), patch.object(u.os, "sync") as sync:
+            u.eject_sd_card(self.sd, runner=runner, platform="darwin")
+            sync.assert_called_once()
+        self.assertEqual(calls, [["diskutil", "eject", str(self.sd.resolve())]])
+
+    def test_linux_eject_checks_mount_and_parent_disk(self):
+        sd = str(self.sd.resolve())
+        calls = []
+        def runner(args, **kwargs):
+            calls.append(args)
+            if args[:4] == ["findmnt", "-n", "-o", "TARGET"]:
+                value = sd
+            elif args[:4] == ["findmnt", "-n", "-o", "SOURCE"]:
+                value = "/dev/sdb1"
+            elif args[0] == "lsblk" and "PKNAME" in args:
+                value = "sdb"
+            elif args[0] == "lsblk":
+                value = "1 usb"
+            else:
+                value = "done"
+            return subprocess.CompletedProcess(args, 0, value, "")
+        with patch.object(u, "mac_card_info", return_value=None), patch.object(u.os, "sync"):
+            u.eject_sd_card(self.sd, runner=runner, platform="linux")
+        self.assertEqual(calls[-2:], [["udisksctl", "unmount", "-b", "/dev/sdb1"],
+                                      ["udisksctl", "power-off", "-b", "/dev/sdb"]])
 
 
 if __name__ == "__main__":
