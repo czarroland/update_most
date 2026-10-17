@@ -1,0 +1,37 @@
+name: Suggest a Game Bub core
+description: Propose a public Rev4 core release for catalog review
+title: "[Core] "
+labels: []
+body:
+  - type: input
+    id: repository
+    attributes:
+      label: Public repository URL
+      placeholder: https://github.com/developer/core
+    validations:
+      required: true
+  - type: input
+    id: release
+    attributes:
+      label: Release tag and ZIP asset name
+    validations:
+      required: true
+  - type: input
+    id: coreid
+    attributes:
+      label: Core metadata ID and FPGA hardware target
+      description: Copy the ID from core.json; do not attach ROMs or BIOS files.
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Author, license, source attribution and requirements
+      description: Include hardware-test status and any necessary firmware or BIOS requirements.
+    validations:
+      required: true
+  - type: textarea
+    id: ai
+    attributes:
+      label: AI assistance (if used for this submission)
+      description: Disclose whether text or code in this submission was AI-generated.

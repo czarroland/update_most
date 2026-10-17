@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "audit_date": "2026-10-17",
+  "platform": "gamebub_rev4",
+  "verification_method": "GitHub release API and tagged GitHub repository core.json inspected; published digests recorded but release binary downloads not available in audit environment; no handheld test",
+  "archive_bytes_downloaded": false,
+  "real_hardware_tested": false,
+  "entries": [
+    {"id":"NES","name":"NES / Famicom","repo":"danisla/gamebub-nes","tag":"v1.0.0","core_json_path":"core/NES/core.json","bitstream":"nes_rev4.bit","asset":"gamebub-nes-v1.0.0.zip","sha256":"b8c855e292ed72a43c413f8cb73d87698c69b427afb701d92ae5a6087fd7f1d1","source_verified":true,"note":"FDS, NSF and PAL not supported"},
+    {"id":"SNES","name":"SNES / Super Famicom","repo":"danisla/gamebub-snes","tag":"v1.0.0","core_json_path":"core/SNES/core.json","bitstream":"snes_rev4.bit","asset":"gamebub-snes-v1.0.0.zip","sha256":"2d119f063a26547d116cbe2c7ecd80a32639551e736ff0a4e9ab34d02ab5aab7","source_verified":true,"note":"Some coprocessor operations take added wait states"},
+    {"id":"Wenwald.2600","name":"Atari 2600","repo":"Wenwald/gamebub-2600","tag":"v1.2.0","core_json_path":"core/Wenwald.2600/core.json","bitstream":"2600_rev4.bit","asset":"Wenwald.2600-v1.2.0.zip","sha256":"1bc61942592e0cdcf878f6ea3e53ed7250218746a4b59578ab6af884155929b1","source_verified":true,"note":"2600 only, not Atari 7800; NTSC only per repository"},
+    {"id":"PICO-8","name":"PICO-8 (fake-08)","repo":"danisla/gamebub-pico8","tag":"v0.6.0","core_json_path":"core/PICO-8/core.json","bitstream":"pico8_rev4.bit","asset":"pico8-gamebub.zip","sha256":"eb30bdb21db72d7307b48553a2d45f38ff10c3276dfab4cbf4f1852481758e83","source_verified":true,"note":"ZIP also claims experimental PICO-8-Fast core, not managed as separate catalog entry"},
+    {"id":"alanswx.ColecoVision","name":"ColecoVision","repo":"alanswx/ColecoVision_GameBub","tag":"v0.1.0","core_json_path":"metadata/core.json","bitstream":"ColecoVision-gamebub_rev4.bit","asset":"ColecoVision_GameBub_20261013.zip","sha256":"77e800e794b23563ca06ec8e4ae49beeec7351f3dab50d807fe0b347e6122e0a","source_verified":true,"note":"Early alpha; user must supply copyrighted OS-7 BIOS as coleco.rom"},
+    {"id":"alanswx.AppleIIgs","name":"Apple IIgs","repo":"alanswx/Apple-IIgs_GameBub","tag":"v0.1.0","core_json_path":"metadata/core.json","bitstream":"AppleIIgs-gamebub_rev4.bit","asset":"AppleIIgs_GameBub_20261012.zip","sha256":"def63eed6004a873c0ebe8ed2f06e8dead3309b25320e3bdb2acec07ebd03d23","source_verified":true,"note":"Early alpha; needs user-supplied ROM 01 or ROM 3 and WOZ floppy images"},
+    {"id":"danifunker.MacLC","name":"Macintosh LC","repo":"danifunker/MacLC_GameBub","tag":"v0.1.0","core_json_path":"metadata/core.json","bitstream":"MacLC-gamebub_rev4.bit","asset":"MacLC_GameBub_20261008.zip","sha256":"2b4b541e8aab0a3f77e65bff11e790c85e42a038d1de10cee82df4273a586a2b","source_verified":true,"note":"Early alpha; needs user-supplied Mac LC ROM and disk image; normal core exit needed to save"},
+    {"id":"alanswx.MCR","name":"Bally Midway MCR","repo":"alanswx/MCR_GameBub","tag":"v0.6.0","core_json_path":"metadata/core.json","bitstream":"MCR3-gamebub_rev4.bit","asset":"MCR_GameBub_v0.6.0.zip","sha256":"04638267f7f02ba8fa8b81660b8a328bf9f29e7265ec65b71a7a91467228194d","source_verified":true,"note":"WIP; game-specific ROM preparation with external MCR ROM Builder, some titles hardware-confirmed"},
+    {"id":"alanswx.Universal","name":"Universal Arcade","repo":"alanswx/Universal_GameBub","tag":"v0.2.0-test1","core_json_path":"metadata/core.json","bitstream":"Universal-gamebub_rev4.bit","asset":"Universal-57-games-rev4-ROM-free-test.zip","sha256":"3fd14ff7c86afbd990c341947eaa4f93f1ff05cebe218da18f56ef68306999a9","source_verified":true,"note":"Test release; 57 recipes across 22 games, not 57 fully hardware-verified games"},
+    {"id":"Sega8bit.Dev","name":"GG and SMS Bub","repo":"czarroland/gamegear-bub","tag":"v0.1.0-alpha.6","core_json_path":"metadata/core.json","bitstream":"SegaCore-gamebub_rev4.bit","asset":"GG-and-SMS-Bub-v0.1.0-alpha.6-rev4.zip","sha256":"b08956c12abc8a80da4baa6f67caec99ac52af578de7fb22bd794a6c34cc47af","source_verified":true,"note":"Alpha; no FM audio or PAL; package includes diagnostic roms outside cores tree, skipped by current updater"}
+  ],
+  "unverified_additional_platforms": [
+    {"name":"Virtual Boy","finding":"October 2 2026 community anecdote of working core; no public Game Bub Rev4 release package identified"},
+    {"name":"Neo Geo Pocket","finding":"Same anecdotal report; no public Game Bub Rev4 release package identified"},
+    {"name":"Game.com","finding":"Same anecdotal report; no public Game Bub Rev4 release package identified"},
+    {"name":"CHIP-8","repo":"HRuivo/core-chip8","finding":"Source repo found; no GitHub release ZIP"},
+    {"name":"Game Bub Rev2 NES / Mega Drive","finding":"Rev2 target; must not be auto-installed on Rev4"}
+  ]
+}

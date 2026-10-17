@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "name": "Example community catalog — replace with REAL published core releases",
+  "maintainer": "Your GitHub username",
+  "cores": [
+    {
+      "id": "Example.SMSGameGear",
+      "name": "Sega Master System + Game Gear",
+      "channel": "beta",
+      "enabled": false,
+      "source": {
+        "type": "github_release",
+        "repo": "YOUR_GITHUB_USER/YOUR_GAMEBUB_CORE_REPO",
+        "asset": "*gamebub_rev4*.zip"
+      }
+    },
+    {
+      "id": "Example.AnotherCore",
+      "name": "Another Game Bub Core",
+      "channel": "stable",
+      "enabled": false,
+      "source": {
+        "type": "url",
+        "url": "https://example.com/replace-with-real-core.zip",
+        "version": "1.0.0",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  ]
+}

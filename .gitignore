@@ -1,0 +1,28 @@
+# Python and editor outputs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.vscode/
+.idea/
+
+# Runtime state, local reports, user downloads
+.update_most/
+*.log
+all-cores-check.json
+core-downloads/
+*.zip
+*.uf2
+
+# Do not commit user-owned or proprietary files
+roms/
+saves/
+system/
+*.rom
+*.bios
+*.sav
+*.srm
+*.hda
+*.woz
+*.dsk
+*.bin
