@@ -406,14 +406,47 @@ def unpack_core(package: bytes, core_id: str, hardware: str) -> dict[str, bytes]
         return files
 
 
+def explicit_windows_drive_root(path: str) -> bool:
+    """Only accept an absolute drive-letter root, not a drive-relative slash."""
+    return isinstance(path, str) and bool(re.fullmatch(r"[A-Za-z]:[\\\\/]", path))
+
+
+def protected_windows_drive_root(drive: str, *, system_drive: str = "C:",
+                                 home_drive: str = "", python_drive: str = "",
+                                 windows_drive: str = "") -> bool:
+    """Protect system and UNC roots while permitting an explicit SD-card E:\\ root.
+
+    Pure drive-letter comparisons allow unit tests to run without real drives.
+    The caller still requires an existing SD root and explicit --init for setup.
+    """
+    if not isinstance(drive, str) or not re.fullmatch(r"[A-Za-z]:", drive):
+        return True
+    protected = (system_drive, home_drive, python_drive, windows_drive)
+    current = drive.casefold()
+    return any(isinstance(x, str) and len(x) >= 2
+               and x[:2].casefold() == current for x in protected)
+
+
 def ensure_safe_root(sd: Path, init: bool, dry_run: bool):
+    selected_path = str(sd)  # Preserve whether the user named a drive explicitly.
     if not sd.is_dir():
         raise UpdaterError("SD path does not exist or is not a directory: " + str(sd))
     if sd.is_symlink():
         raise UpdaterError("SD path must not be a symlink")
     sd = sd.resolve()
-    if sd == Path(sd.anchor) or sd == Path.home().resolve():
-        raise UpdaterError("Refusing to operate on drive root or home directory")
+    if sd == Path.home().resolve():
+        raise UpdaterError("Refusing to operate on home directory")
+    if sd == Path(sd.anchor):
+        # The Unix root, a Windows system drive, and a UNC root are unsafe.
+        # Explicitly selected non-system SD drive roots (for example E:\\) are allowed.
+        if (os.name != "nt" or not explicit_windows_drive_root(selected_path) or
+                protected_windows_drive_root(
+                sd.drive,
+                system_drive=os.environ.get("SystemDrive") or "C:",
+                home_drive=Path.home().drive,
+                python_drive=Path(sys.executable).drive,
+                windows_drive=Path(os.environ.get("windir", "C:\\Windows")).drive)):
+            raise UpdaterError("Refusing to operate on OS, home, or network root")
     if (sd / "cores").is_symlink() or (sd / ".update_most").is_symlink():
         raise UpdaterError("SD management directories must not be symlinks")
     for rel in (".update_most/managed.json", ".update_most/backups"):
