@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Update_Most contributors
 """Update_Most: community-curated Game Bub SD-card core and BIOS manager.
 
 AI-assisted software: developed with OpenAI ChatGPT and human direction.

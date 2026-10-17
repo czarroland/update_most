@@ -20,7 +20,12 @@
         "repo": "danisla/gamebub-nes",
         "asset": "gamebub-nes-v*.zip"
       },
-      "homepage": "https://github.com/danisla/gamebub-nes"
+      "homepage": "https://github.com/danisla/gamebub-nes",
+      "upstream": {
+        "author": "danisla and contributors",
+        "license": "GPL-3.0-only",
+        "reference_only": true
+      }
     },
     {
       "id": "SNES",
@@ -37,7 +42,12 @@
         "repo": "danisla/gamebub-snes",
         "asset": "gamebub-snes-v*.zip"
       },
-      "homepage": "https://github.com/danisla/gamebub-snes"
+      "homepage": "https://github.com/danisla/gamebub-snes",
+      "upstream": {
+        "author": "danisla and contributors",
+        "license": "GPL-3.0-only",
+        "reference_only": true
+      }
     },
     {
       "id": "Wenwald.2600",
@@ -54,7 +64,12 @@
         "repo": "Wenwald/gamebub-2600",
         "asset": "Wenwald.2600-v*.zip"
       },
-      "homepage": "https://github.com/Wenwald/gamebub-2600"
+      "homepage": "https://github.com/Wenwald/gamebub-2600",
+      "upstream": {
+        "author": "Wenwald and contributors",
+        "license": "MIT",
+        "reference_only": true
+      }
     },
     {
       "id": "PICO-8",
@@ -71,7 +86,12 @@
         "repo": "danisla/gamebub-pico8",
         "asset": "pico8-gamebub.zip"
       },
-      "homepage": "https://github.com/danisla/gamebub-pico8"
+      "homepage": "https://github.com/danisla/gamebub-pico8",
+      "upstream": {
+        "author": "danisla and contributors",
+        "license": "MIT",
+        "reference_only": true
+      }
     },
     {
       "id": "alanswx.ColecoVision",
@@ -88,7 +108,12 @@
         "repo": "alanswx/ColecoVision_GameBub",
         "asset": "ColecoVision_GameBub_*.zip"
       },
-      "homepage": "https://github.com/alanswx/ColecoVision_GameBub"
+      "homepage": "https://github.com/alanswx/ColecoVision_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "GPL-3.0-only",
+        "reference_only": true
+      }
     },
     {
       "id": "alanswx.AppleIIgs",
@@ -105,7 +130,12 @@
         "repo": "alanswx/Apple-IIgs_GameBub",
         "asset": "AppleIIgs_GameBub_*.zip"
       },
-      "homepage": "https://github.com/alanswx/Apple-IIgs_GameBub"
+      "homepage": "https://github.com/alanswx/Apple-IIgs_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "GPL-3.0-only",
+        "reference_only": true
+      }
     },
     {
       "id": "danifunker.MacLC",
@@ -122,7 +152,12 @@
         "repo": "danifunker/MacLC_GameBub",
         "asset": "MacLC_GameBub_*.zip"
       },
-      "homepage": "https://github.com/danifunker/MacLC_GameBub"
+      "homepage": "https://github.com/danifunker/MacLC_GameBub",
+      "upstream": {
+        "author": "danifunker and contributors",
+        "license": "GPL-3.0-or-later",
+        "reference_only": true
+      }
     },
     {
       "id": "alanswx.MCR",
@@ -139,7 +174,12 @@
         "repo": "alanswx/MCR_GameBub",
         "asset": "MCR_GameBub_v*.zip"
       },
-      "homepage": "https://github.com/alanswx/MCR_GameBub"
+      "homepage": "https://github.com/alanswx/MCR_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "license not verified",
+        "reference_only": true
+      }
     },
     {
       "id": "alanswx.Universal",
@@ -157,7 +197,12 @@
         "asset": "Universal-57-games-rev4-ROM-free-test.zip",
         "tag": "v0.2.0-test1"
       },
-      "homepage": "https://github.com/alanswx/Universal_GameBub"
+      "homepage": "https://github.com/alanswx/Universal_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "license not verified",
+        "reference_only": true
+      }
     },
     {
       "id": "Sega8bit.Dev",
@@ -175,7 +220,12 @@
         "asset": "GG-and-SMS-Bub-v0.1.0-alpha.6-rev4.zip",
         "tag": "v0.1.0-alpha.6"
       },
-      "homepage": "https://github.com/czarroland/gamegear-bub"
+      "homepage": "https://github.com/czarroland/gamegear-bub",
+      "upstream": {
+        "author": "czarroland and contributors",
+        "license": "GPL-3.0-only",
+        "reference_only": true
+      }
     }
   ],
   "bios": [

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 Update_Most contributors
 """Audit actual GitHub core release packages without writing to a Game Bub card.
 
 Runs on Python 3.9+ with no third-party modules. This is a *host-side* test,

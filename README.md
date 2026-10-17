@@ -1,62 +1,94 @@
 # Update_Most
 
-A community-maintained updater for publicly released Game Bub FPGA cores and associated support files. Runs on a computer with Python 3.9+ (macOS, Linux or Windows PowerShell). This repository is an **initial public development baseline** based on v0.7 of the updater.
+Update_Most is an **unofficial, community-maintained Game Bub core updater**. It downloads published FPGA core release archives and prepares a user-selected microSD card on **macOS, Linux, and Windows** using **Python 3.9+**. This repository is an early development baseline; hardware compatibility and network download behavior have not been comprehensively verified.
 
-**Development disclosure:** Update_Most's implementation, tests, and documentation were written with substantial assistance from **OpenAI ChatGPT**, directed and reviewed by the maintainer. This is not a claim of independent human authorship. See [AI_DISCLOSURE.md](AI_DISCLOSURE.md).
+**Development disclosure:** The project was written with substantial assistance from **OpenAI ChatGPT**, under the maintainer's direction and review. This includes code, tests, catalog work, documentation, and proposed features. See [AI_DISCLOSURE.md](AI_DISCLOSURE.md).
 
-**Third-party attribution:** The project takes architectural inspiration from MiSTer Update All and MiSTer Downloader, and reads URL/index information from `BiosDB_MiSTer`. We have not copied the GPL-3.0 MiSTer updater source into this project. Source, licenses, and attribution are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The core and metadata projects remain the work of their respective authors.
+**License:** Original Update_Most source code and documentation in this repository are published under the **GNU General Public License, version 3 only (GPL-3.0-only)**. See [LICENSE](LICENSE). This license applies only to material the Update_Most contributors have rights to license. It does **not** relicense external Game Bub cores, firmware, BIOS, MAME ROMs, upstream databases, or other third-party material.
 
-## Current scope
+**Upstream attribution:** The design was informed by [MiSTer Update All](https://github.com/theypsilon/Update_All_MiSTer) and [MiSTer Downloader](https://github.com/MiSTer-devel/Downloader_MiSTer), both GPL-3.0 projects. Their source code has **not** been copied into this repository. The updater can consult [BiosDB_MiSTer](https://github.com/ajgowans/BiosDB_MiSTer) (MIT) by URL for BIOS-index metadata. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for credits, license boundaries, and per-core provenance.
 
-- Download selected GitHub core release ZIPs using an editable catalog.
-- Check archive hashes and Game Bub metadata, and install supported core directories on a microSD card.
-- Track managed files and back up files before approved replacement.
-- Inspect BIOS requirements, import user-supplied files, and use curated references to the MiSTer community BIOS index.
-- Preserve unrelated ROMs and saves; the program does not format the card or flash firmware.
+## Implemented behavior
 
-**Verification status:** Offline unit tests use synthetic fixtures and mocked downloads. Release listings and published metadata were checked in October 2026, but the published binaries and BIOS archives have **not been independently downloaded** in the test environment, and this repository has **not been verified on physical Game Bub hardware**. Features and external source availability can change; this is not a stable release announcement.
+- Reads a JSON catalog of reviewed core release sources.
+- Downloads GitHub release ZIP archives, checks release SHA-256 values where available, and validates Game Bub core metadata and hardware targets.
+- Installs to `/cores/<core-id>/`, backs up managed files before replacement, and keeps a record of managed files.
+- Handles BIOS paths, user-supplied BIOS imports, and selected MiSTer community BIOS database entries.
+- Preserves unrelated saves and ROM files. Does **not** format a card, download games, or flash the handheld firmware.
+- Allows a local catalog (default) or explicitly supplied HTTPS catalog.
+- Runs offline unit tests on synthetic data. Includes a core archive verification utility.
 
-## Install / run
+## Requirements
 
-Clone the repository or download its files. A terminal with Python 3.9 or newer is required.
+Python 3.9 or later, a computer with Internet access for core downloads, and a Game Bub-compatible microSD card. **Back up the card before the first development-build run.** Firmware supporting SD-card core loading is required for third-party cores; this program does not install it.
+
+## Usage
+
+### macOS or Linux
 
 ```sh
-# macOS / Linux — replace with the real SD-card mount point
+# Inspect bundled catalog, without accessing the card
+python3 update_most.py --list
+
+# An existing correctly formatted card; replace with its mount path
 ./update_most.sh --sd /Volumes/GAMEBUB --init
 ./update_most.sh --sd /Volumes/GAMEBUB
 
-# Inspect catalog without writing
-python3 update_most.py --list
-python3 update_most.py --sd /Volumes/GAMEBUB --dry-run
+# Check planned changes without writing files
+./update_most.sh --sd /Volumes/GAMEBUB --dry-run
 ```
 
-Windows PowerShell:
+On Linux the SD mount path will differ, for example `/run/media/$USER/GAMEBUB`. Only use `--init` when preparing a previously unrecognized card. The updater does not format storage.
+
+### Windows PowerShell
 
 ```powershell
 .\update_most.ps1 --sd 'E:\' --init
 .\update_most.ps1 --sd 'E:\'
 ```
 
-Use `--init` only for an initial prepared SD card. The SD card must already be correctly formatted; this tool does not format it. Back up your card before using a development build.
+### Experimental releases and BIOS handling
 
-By default the script reads **its bundled `catalog.json`**. The hosted-catalog feature is still opt-in; to use a GitHub-hosted catalog, pass `--catalog https://raw.githubusercontent.com/.../catalog.json`. We will make the repository-hosted catalog the default only after the release and integrity policy is reviewed.
+```sh
+python3 update_most.py --sd /Volumes/GAMEBUB --channel beta
+python3 update_most.py --sd /Volumes/GAMEBUB --list-bios
+python3 update_most.py --sd /Volumes/GAMEBUB --bios-only --bios-dir ~/My-BIOS
+python3 update_most.py --sd /Volumes/GAMEBUB --no-mister-bios
+```
 
-## BIOS handling and licensing
+**BIOS source caution:** The existing v0.7 behavior fetches matching entries from the public MiSTer community BIOS URL index **by default**, when missing. Users can disable this with `--no-mister-bios` or skip BIOS handling with `--skip-bios`. The linked firmware images may be copyrighted; being listed in a public index is **not** a grant of permission to download or redistribute them. The per-source authorization and safe default policy are under review in [issue #2](https://github.com/czarroland/update_most/issues/2). The repository includes **no BIOS or commercial game image bytes**.
 
-The v0.7 baseline has automatic MiSTer community-index BIOS fetching enabled by default when the corresponding file is missing. Users can disable it with `--no-mister-bios` or bypass all BIOS handling with `--skip-bios`. Community URLs and checksums do **not** establish that copyrighted BIOS images are licensed for redistribution; do not interpret this project as providing such permission. **Review of these sources and the download-default policy remains a release blocker.** No BIOS or commercial game images are included in this repository.
+## Catalog and community contributions
 
-## Tests
+The tracked catalog is [catalog.json](catalog.json). The default program behavior currently uses this **bundled local file**, so a newer repository catalog is not automatically adopted. Users who explicitly want the repository-hosted version can pass:
+
+```sh
+python3 update_most.py --sd /Volumes/GAMEBUB \
+  --catalog https://raw.githubusercontent.com/czarroland/update_most/main/catalog.json
+```
+
+The URL above references `main` **after** the current draft pull request is merged. Catalog entries require attribution, a documented upstream source and a compatible Game Bub target. Run the catalog validator before submitting changes:
+
+```sh
+python3 validate_catalog.py --catalog catalog.json
+python3 -m unittest discover -s tests -v
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the metadata, author/AI disclosure and licensing requirements. No external code, ROM, firmware, or BIOS should be embedded in catalog submissions without confirmed rights.
+
+## Tests and verification
 
 ```sh
 python3 -m unittest discover -s tests -v
+python3 validate_catalog.py --catalog catalog.json
 python3 update_most.py --list
 python3 verify_all.py --help
 ```
 
-The verifier can fetch core *release ZIPs* and simulate installation in a temporary folder; running it does not test hardware. See `verify_all.py --help` for options.
+GitHub Actions runs the checks on macOS, Linux, and Windows. Unit tests use synthetic archives and mocked downloads; they are **not** hardware tests or proof of real remote server availability. Independent ZIP-download verification and Game Bub Rev4 smoke tests remain open in [issue #3](https://github.com/czarroland/update_most/issues/3).
 
-## Contributions and licensing
+## License and project status
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for submission requirements and [ROADMAP.md](ROADMAP.md) for planned development. The repository's existing LGPL-2.1 license has been retained for project-authored code, pending formal provenance review. **That license does not relicense third-party cores, scripts, metadata, BIOS or ROMs.** We accept no copied third-party code without a documented compatible license and proper attribution.
+Copyright (C) 2026 Update_Most contributors. Project-authored content is distributed under **GPL-3.0-only** with **no warranty**; see [LICENSE](LICENSE). External projects are separately licensed by their authors. References to MiSTer, Game Bub, and individual core authors do not imply endorsement.
 
-Game Bub is a separate project by [Eli Lipsitz](https://github.com/elipsitz/gamebub). This updater is an unofficial community project.
+[ROADMAP.md](ROADMAP.md) documents proposed development work without a release commitment. [Game Bub](https://github.com/elipsitz/gamebub) is developed by Eli Lipsitz and contributors; this updater is independent of that project.

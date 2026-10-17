@@ -8,3 +8,4 @@ Update_Most was designed and implemented with substantial assistance from **Open
 - **Contributions:** Document AI-generated or AI-assisted code in pull-request descriptions. Do not attribute third-party work to ChatGPT.
 
 This disclosure is not an endorsement by OpenAI or a claim that AI generated original MiSTer or Game Bub FPGA designs.
+Project-authored code is published under GPL-3.0-only. The license applies to material contributors can legally license; using AI assistance does not change third-party ownership or remove their attribution requirements.
