@@ -33,7 +33,7 @@ Python 3.9 or later, a computer with Internet access for core downloads, and a G
 
 ### Interactive menu
 
-Run `python3 update_most.py --menu` in a terminal. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a category-filtered core browser, BIOS management, a card health report, verification, restore, uninstall, safe eject, and settings. The browser shows the installed version, firmware requirement, current update/README check, and author release notes before installing a selected core. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
+Double-click `update_most.command` on macOS, run `./update_most.sh` on Linux, or run `.\update_most.ps1` in PowerShell on Windows. These launchers open the menu when no arguments are given. You can also run `python3 update_most.py --menu` directly. The menu suggests likely mounted Game Bub cards, then offers **Update everything**, update checks, a category-filtered core browser, BIOS management, a card health report, verification, restore, uninstall, safe eject, and settings. The browser shows the installed version, firmware requirement, current update/README check, and author release notes before installing a selected core. You can provide `--sd /path/to/card` to skip card selection. Menu preferences are saved as `.update_most/settings.json` on the chosen card. The updater does not format cards.
 
 New cards default to the beta catalog channel so Update everything includes third-party cores that require the v1.1 beta firmware. This does not change the handheld's firmware; use Settings to switch the catalog channel to stable if desired.
 

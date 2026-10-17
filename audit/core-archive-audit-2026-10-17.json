@@ -1,0 +1,253 @@
+{
+  "created_at_utc": "2026-10-17T23:30:02+00:00",
+  "entries": [
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "nes_rev4.bit"
+      ],
+      "downloaded_sha256": "b8c855e292ed72a43c413f8cb73d87698c69b427afb701d92ae5a6087fd7f1d1",
+      "hardware_verified": false,
+      "id": "NES",
+      "installed_files": [
+        "core.json",
+        "files.json",
+        "nes_rev4.bit",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "NES / Famicom",
+      "published_sha256": "b8c855e292ed72a43c413f8cb73d87698c69b427afb701d92ae5a6087fd7f1d1",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v1.0.0",
+      "zip_bytes": 819723,
+      "zip_url": "https://github.com/danisla/gamebub-nes/releases/download/v1.0.0/gamebub-nes-v1.0.0.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "snes_rev4.bit"
+      ],
+      "downloaded_sha256": "2d119f063a26547d116cbe2c7ecd80a32639551e736ff0a4e9ab34d02ab5aab7",
+      "hardware_verified": false,
+      "id": "SNES",
+      "installed_files": [
+        "core.json",
+        "files.json",
+        "settings.json",
+        "snes_rev4.bit"
+      ],
+      "metadata_verified": true,
+      "name": "SNES / Super Famicom",
+      "published_sha256": "2d119f063a26547d116cbe2c7ecd80a32639551e736ff0a4e9ab34d02ab5aab7",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v1.0.0",
+      "zip_bytes": 938871,
+      "zip_url": "https://github.com/danisla/gamebub-snes/releases/download/v1.0.0/gamebub-snes-v1.0.0.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "2600_rev4.bit"
+      ],
+      "downloaded_sha256": "1bc61942592e0cdcf878f6ea3e53ed7250218746a4b59578ab6af884155929b1",
+      "hardware_verified": false,
+      "id": "Wenwald.2600",
+      "installed_files": [
+        "2600_rev4.bit",
+        "core.json",
+        "files.json",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "Atari 2600",
+      "published_sha256": "1bc61942592e0cdcf878f6ea3e53ed7250218746a4b59578ab6af884155929b1",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v1.2.0",
+      "zip_bytes": 288714,
+      "zip_url": "https://github.com/Wenwald/gamebub-2600/releases/download/v1.2.0/Wenwald.2600-v1.2.0.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "pico8_rev4.bit"
+      ],
+      "downloaded_sha256": "eb30bdb21db72d7307b48553a2d45f38ff10c3276dfab4cbf4f1852481758e83",
+      "hardware_verified": false,
+      "id": "PICO-8",
+      "installed_files": [
+        "core.json",
+        "files.json",
+        "pico8.bin",
+        "pico8_rev4.bit",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "PICO-8 (fake-08)",
+      "published_sha256": "eb30bdb21db72d7307b48553a2d45f38ff10c3276dfab4cbf4f1852481758e83",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.6.0",
+      "zip_bytes": 2291597,
+      "zip_url": "https://github.com/danisla/gamebub-pico8/releases/download/v0.6.0/pico8-gamebub.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "ColecoVision-gamebub_rev4.bit"
+      ],
+      "downloaded_sha256": "77e800e794b23563ca06ec8e4ae49beeec7351f3dab50d807fe0b347e6122e0a",
+      "hardware_verified": false,
+      "id": "alanswx.ColecoVision",
+      "installed_files": [
+        "ColecoVision-gamebub_rev4.bit",
+        "LICENSE.txt",
+        "core.json",
+        "files.json",
+        "gamedb.bin",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "ColecoVision",
+      "published_sha256": "77e800e794b23563ca06ec8e4ae49beeec7351f3dab50d807fe0b347e6122e0a",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.1.0",
+      "zip_bytes": 312038,
+      "zip_url": "https://github.com/alanswx/ColecoVision_GameBub/releases/download/v0.1.0/ColecoVision_GameBub_20261013.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "AppleIIgs-gamebub_rev4.bit"
+      ],
+      "downloaded_sha256": "def63eed6004a873c0ebe8ed2f06e8dead3309b25320e3bdb2acec07ebd03d23",
+      "hardware_verified": false,
+      "id": "alanswx.AppleIIgs",
+      "installed_files": [
+        "AppleIIgs-gamebub_rev4.bit",
+        "LICENSE.txt",
+        "core.json",
+        "files.json",
+        "gamedb.bin",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "Apple IIgs",
+      "published_sha256": "def63eed6004a873c0ebe8ed2f06e8dead3309b25320e3bdb2acec07ebd03d23",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.1.0",
+      "zip_bytes": 739837,
+      "zip_url": "https://github.com/alanswx/Apple-IIgs_GameBub/releases/download/v0.1.0/AppleIIgs_GameBub_20261012.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "MacLC-gamebub_rev4.bit"
+      ],
+      "downloaded_sha256": "2b4b541e8aab0a3f77e65bff11e790c85e42a038d1de10cee82df4273a586a2b",
+      "hardware_verified": false,
+      "id": "danifunker.MacLC",
+      "installed_files": [
+        "LICENSE.txt",
+        "MacLC-gamebub_rev4.bit",
+        "core.json",
+        "files.json",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "Macintosh LC",
+      "published_sha256": "2b4b541e8aab0a3f77e65bff11e790c85e42a038d1de10cee82df4273a586a2b",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.1.0",
+      "zip_bytes": 1016539,
+      "zip_url": "https://github.com/danifunker/MacLC_GameBub/releases/download/v0.1.0/MacLC_GameBub_20261008.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "MCR3-gamebub_rev4.bit"
+      ],
+      "downloaded_sha256": "04638267f7f02ba8fa8b81660b8a328bf9f29e7265ec65b71a7a91467228194d",
+      "hardware_verified": false,
+      "id": "alanswx.MCR",
+      "installed_files": [
+        "MCR3-gamebub_rev4.bit",
+        "core.json",
+        "files.json",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "Bally Midway MCR Arcade",
+      "published_sha256": "04638267f7f02ba8fa8b81660b8a328bf9f29e7265ec65b71a7a91467228194d",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.6.0",
+      "zip_bytes": 795764,
+      "zip_url": "https://github.com/alanswx/MCR_GameBub/releases/download/v0.6.0/MCR_GameBub_v0.6.0.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "Universal-gamebub_rev4.bit"
+      ],
+      "downloaded_sha256": "3fd14ff7c86afbd990c341947eaa4f93f1ff05cebe218da18f56ef68306999a9",
+      "hardware_verified": false,
+      "id": "alanswx.Universal",
+      "installed_files": [
+        "Universal-gamebub_rev4.bit",
+        "core.json",
+        "files.json",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "Universal Arcade (test)",
+      "published_sha256": "3fd14ff7c86afbd990c341947eaa4f93f1ff05cebe218da18f56ef68306999a9",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.2.0-test1",
+      "zip_bytes": 985229,
+      "zip_url": "https://github.com/alanswx/Universal_GameBub/releases/download/v0.2.0-test1/Universal-57-games-rev4-ROM-free-test.zip"
+    },
+    {
+      "binary_digest_verified": true,
+      "bitstreams": [
+        "SegaCore-gamebub_rev4.bit"
+      ],
+      "downloaded_sha256": "b08956c12abc8a80da4baa6f67caec99ac52af578de7fb22bd794a6c34cc47af",
+      "hardware_verified": false,
+      "id": "Sega8bit.Dev",
+      "installed_files": [
+        "SegaCore-gamebub_rev4.bit",
+        "build-info.json",
+        "core.json",
+        "files.json",
+        "settings.json"
+      ],
+      "metadata_verified": true,
+      "name": "GG and SMS Bub (alpha)",
+      "published_sha256": "b08956c12abc8a80da4baa6f67caec99ac52af578de7fb22bd794a6c34cc47af",
+      "simulated_install_verified": true,
+      "status": "computer_side_passed",
+      "tag": "v0.1.0-alpha.6",
+      "zip_bytes": 341397,
+      "zip_url": "https://github.com/czarroland/gamegear-bub/releases/download/v0.1.0-alpha.6/GG-and-SMS-Bub-v0.1.0-alpha.6-rev4.zip"
+    }
+  ],
+  "execution_note": "Host-side archive audit only; does not verify connected SD or Game Bub operation.",
+  "failed": 0,
+  "hardware": "gamebub_rev4",
+  "host_os": "Darwin",
+  "host_os_release": "25.5.0",
+  "mode": "download_sha256_extract_and_temporary_sd_install",
+  "passed": 10,
+  "python_version": "3.14.7",
+  "real_handheld_tested": false,
+  "schema": 1,
+  "total": 10
+}
