@@ -1,0 +1,434 @@
+{
+  "schema": 1,
+  "name": "Update_Most Community Catalog · 2026-10-17 · automatic MiSTer BIOS fetching",
+  "maintainer": "Community curator",
+  "last_reviewed": "2026-10-17",
+  "description": "Curated Game Bub Rev4 cores and BIOS paths; MiSTer BiosDB references downloaded automatically when missing, with pinned MD5 and size verification; Kitrinx paths verified.",
+  "cores": [
+    {
+      "id": "NES",
+      "name": "NES / Famicom",
+      "category": "Console",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "v1.1-beta2 or newer",
+      "source": {
+        "type": "github_release",
+        "repo": "danisla/gamebub-nes",
+        "asset": "gamebub-nes-v*.zip"
+      },
+      "homepage": "https://github.com/danisla/gamebub-nes",
+      "upstream": {
+        "author": "danisla and contributors",
+        "license": "GPL-3.0 (GitHub-reported)",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "SNES",
+      "name": "SNES / Super Famicom",
+      "category": "Console",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "v1.1-beta2 or newer",
+      "source": {
+        "type": "github_release",
+        "repo": "danisla/gamebub-snes",
+        "asset": "gamebub-snes-v*.zip"
+      },
+      "homepage": "https://github.com/danisla/gamebub-snes",
+      "upstream": {
+        "author": "danisla and contributors",
+        "license": "GPL-3.0 (GitHub-reported)",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "Wenwald.2600",
+      "name": "Atari 2600",
+      "category": "Console",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "v1.1-beta2 or newer",
+      "source": {
+        "type": "github_release",
+        "repo": "Wenwald/gamebub-2600",
+        "asset": "Wenwald.2600-v*.zip"
+      },
+      "homepage": "https://github.com/Wenwald/gamebub-2600",
+      "upstream": {
+        "author": "Wenwald and contributors",
+        "license": "MIT",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PICO-8",
+      "name": "PICO-8 (fake-08)",
+      "category": "Fantasy console",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "v1.1-beta2 or newer",
+      "source": {
+        "type": "github_release",
+        "repo": "danisla/gamebub-pico8",
+        "asset": "pico8-gamebub.zip"
+      },
+      "homepage": "https://github.com/danisla/gamebub-pico8",
+      "upstream": {
+        "author": "danisla and contributors",
+        "license": "MIT",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "alanswx.ColecoVision",
+      "name": "ColecoVision",
+      "category": "Console",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "core-loading v1.1 beta family",
+      "source": {
+        "type": "github_release",
+        "repo": "alanswx/ColecoVision_GameBub",
+        "asset": "ColecoVision_GameBub_*.zip"
+      },
+      "homepage": "https://github.com/alanswx/ColecoVision_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "GPL-3.0 (GitHub-reported)",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "alanswx.AppleIIgs",
+      "name": "Apple IIgs",
+      "category": "Computer",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "core-loading v1.1 beta family",
+      "source": {
+        "type": "github_release",
+        "repo": "alanswx/Apple-IIgs_GameBub",
+        "asset": "AppleIIgs_GameBub_*.zip"
+      },
+      "homepage": "https://github.com/alanswx/Apple-IIgs_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "GPL-3.0 (GitHub-reported)",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "danifunker.MacLC",
+      "name": "Macintosh LC",
+      "category": "Computer",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "core-loading v1.1 beta family",
+      "source": {
+        "type": "github_release",
+        "repo": "danifunker/MacLC_GameBub",
+        "asset": "MacLC_GameBub_*.zip"
+      },
+      "homepage": "https://github.com/danifunker/MacLC_GameBub",
+      "upstream": {
+        "author": "danifunker and contributors",
+        "license": "GPL-3.0-or-later",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "alanswx.MCR",
+      "name": "Bally Midway MCR Arcade",
+      "category": "Arcade",
+      "channel": "stable",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "core-loading v1.1 beta family",
+      "source": {
+        "type": "github_release",
+        "repo": "alanswx/MCR_GameBub",
+        "asset": "MCR_GameBub_v*.zip"
+      },
+      "homepage": "https://github.com/alanswx/MCR_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "license not verified",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "alanswx.Universal",
+      "name": "Universal Arcade (test)",
+      "category": "Arcade",
+      "channel": "beta",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "core-loading v1.1 beta family",
+      "source": {
+        "type": "github_release",
+        "repo": "alanswx/Universal_GameBub",
+        "asset": "Universal-57-games-rev4-ROM-free-test.zip",
+        "tag": "v0.2.0-test1"
+      },
+      "homepage": "https://github.com/alanswx/Universal_GameBub",
+      "upstream": {
+        "author": "alanswx and contributors",
+        "license": "license not verified",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "Sega8bit.Dev",
+      "name": "GG and SMS Bub (alpha)",
+      "category": "Console",
+      "channel": "beta",
+      "enabled": true,
+      "hardware": [
+        "gamebub_rev4"
+      ],
+      "requires_firmware": "custom core-loading v1.1 beta firmware",
+      "source": {
+        "type": "github_release",
+        "repo": "czarroland/gamegear-bub",
+        "asset": "GG-and-SMS-Bub-v0.1.0-alpha.6-rev4.zip",
+        "tag": "v0.1.0-alpha.6"
+      },
+      "homepage": "https://github.com/czarroland/gamegear-bub",
+      "upstream": {
+        "author": "czarroland and contributors",
+        "license": "GPL-3.0 (GitHub-reported)",
+        "reference_only": true
+      }
+    }
+  ],
+  "bios": [
+    {
+      "id": "gb-dmg-boot",
+      "name": "Game Boy DMG original boot ROM (optional)",
+      "destination": "system/gameboy.bios-dmg.bin",
+      "size": 256,
+      "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+      "required": false,
+      "redistribution": "user_supplied"
+    },
+    {
+      "id": "gb-cgb-boot",
+      "name": "Game Boy Color original boot ROM (optional)",
+      "destination": "system/gameboy.bios-cgb.bin",
+      "size": 2304,
+      "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+      "required": false,
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/GAMEBOY/boot1.rom"
+      ],
+      "md5": "dbfce9db9deaa2567f6a84fde55f9680",
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/GAMEBOY/boot1.rom"
+      }
+    },
+    {
+      "id": "gba-boot",
+      "name": "Game Boy Advance original boot ROM (optional)",
+      "destination": "system/gba.bios.bin",
+      "size": 16384,
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "required": false,
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/GBA/boot.rom"
+      ],
+      "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/GBA/boot.rom"
+      }
+    },
+    {
+      "id": "coleco-os7",
+      "name": "ColecoVision OS-7 BIOS",
+      "core_id": "alanswx.ColecoVision",
+      "destination": "cores/alanswx.ColecoVision/coleco.rom",
+      "size": 8192,
+      "required": true,
+      "aliases": [
+        "colecovision.rom",
+        "os7.u2"
+      ],
+      "redistribution": "user_supplied",
+      "help": "Use your legally obtained 8 KiB ColecoVision OS-7 ROM."
+    },
+    {
+      "id": "apple-iigs-rom01",
+      "name": "Apple IIgs ROM 01",
+      "core_id": "alanswx.AppleIIgs",
+      "destination": "cores/alanswx.AppleIIgs/rom01.rom",
+      "size": 131072,
+      "one_of": "apple-iigs-boot",
+      "aliases": [
+        "boot1.rom"
+      ],
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/Apple-IIgs/boot1.rom"
+      ],
+      "md5": "20a0334c447cb069a040ae5be1d938df",
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/Apple-IIgs/boot1.rom"
+      }
+    },
+    {
+      "id": "apple-iigs-rom3",
+      "name": "Apple IIgs ROM 3",
+      "core_id": "alanswx.AppleIIgs",
+      "destination": "cores/alanswx.AppleIIgs/rom3.rom",
+      "size": 262144,
+      "one_of": "apple-iigs-boot",
+      "aliases": [
+        "boot.rom"
+      ],
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/Apple-IIgs/boot.rom"
+      ],
+      "md5": "ba89edf2729a28a17cd9e0f7a0ac9a39",
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/Apple-IIgs/boot.rom"
+      }
+    },
+    {
+      "id": "macintosh-lc-rom",
+      "name": "Macintosh LC ROM",
+      "core_id": "danifunker.MacLC",
+      "destination": "cores/danifunker.MacLC/MacLC.rom",
+      "size": 524288,
+      "aliases": [
+        "boot0.rom"
+      ],
+      "required": true,
+      "redistribution": "user_supplied"
+    },
+    {
+      "id": "mcr-ssio-prom",
+      "name": "Bally Midway MCR SSIO timing PROM",
+      "core_id": "alanswx.MCR",
+      "destination": "cores/alanswx.MCR/ssio.prom",
+      "size": 32,
+      "required": true,
+      "redistribution": "user_supplied",
+      "help": "May be supplied by the core package or generated locally using the MCR ROM builder.",
+      "sha256": "4962a47f67ce0cebc655026efed495eb17fc29e7072650ecab2cecc4f16c06dc"
+    },
+    {
+      "id": "ngpc-color-boot",
+      "name": "Neo Geo Pocket Color BIOS",
+      "destination": "cores/Kitrinx.NGPC/boot0.rom",
+      "size": 65536,
+      "md5": "3655aacebb43a963607d4cf821fc1301",
+      "required": true,
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/NGPC/boot0.rom",
+        "system/ngpc.boot0.rom"
+      ],
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/NGPC/boot0.rom"
+      },
+      "help": "Verified with maintainer-supplied core.json and files.json. Fetches matching BIOS from MiSTer community index by default, when appropriate rights exist; disable via --no-mister-bios. No ROM, save or NVRAM data is downloaded.",
+      "target_core": {
+        "id": "Kitrinx.NGPC",
+        "bitstream": "NgpcCore-gamebub_rev4.bit",
+        "filename": "boot0.rom"
+      },
+      "core_id": "Kitrinx.NGPC",
+      "legacy_destinations": [
+        "system/ngpc.boot0.rom"
+      ]
+    },
+    {
+      "id": "ngpc-mono-boot",
+      "name": "Neo Geo Pocket monochrome BIOS",
+      "destination": "cores/Kitrinx.NGPC/boot1.rom",
+      "size": 65536,
+      "md5": "d87d876c4391935c9d48ef352a3ff02d",
+      "required": false,
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/NGPC/boot1.rom",
+        "system/ngpc.boot1.rom"
+      ],
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/NGPC/boot1.rom"
+      },
+      "help": "Verified with maintainer-supplied core.json and files.json. Fetches matching BIOS from MiSTer community index by default, when appropriate rights exist; disable via --no-mister-bios. No ROM, save or NVRAM data is downloaded.",
+      "target_core": {
+        "id": "Kitrinx.NGPC",
+        "bitstream": "NgpcCore-gamebub_rev4.bit",
+        "filename": "boot1.rom"
+      },
+      "core_id": "Kitrinx.NGPC",
+      "legacy_destinations": [
+        "system/ngpc.boot1.rom"
+      ]
+    },
+    {
+      "id": "gamecom-boot",
+      "name": "Tiger Game.com external BIOS",
+      "destination": "cores/Kitrinx.GameCom/boot.rom",
+      "size": 262144,
+      "md5": "3f2178d717dd309ed7424d49ef92987f",
+      "required": true,
+      "redistribution": "community_unverified",
+      "import_paths": [
+        "games/GameCom/boot.rom",
+        "system/gamecom.boot.rom"
+      ],
+      "source": {
+        "type": "mister_bios_db",
+        "path": "games/GameCom/boot.rom"
+      },
+      "help": "Verified with maintainer-supplied core.json and files.json. Fetches matching BIOS from MiSTer community index by default, when appropriate rights exist; disable via --no-mister-bios. No ROM, save or NVRAM data is downloaded.",
+      "target_core": {
+        "id": "Kitrinx.GameCom",
+        "bitstream": "GameComCore-gamebub_rev4.bit",
+        "filename": "boot.rom"
+      },
+      "core_id": "Kitrinx.GameCom",
+      "legacy_destinations": [
+        "system/gamecom.boot.rom"
+      ]
+    }
+  ]
+}
