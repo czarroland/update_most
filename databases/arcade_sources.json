@@ -12,8 +12,9 @@
       "sha1": "ee1fc4db4d6c4a32c11e311534a6235f1769af69"
     },
     "cosmica.zip": {
-      "size": 30908,
-      "sha1": "597800a6b3627b885291defab0e49b2483d53358"
+      "size": 45720,
+      "sha1": "8c184fa2bfe885f1dd5b2831d715cbd1bcba6e1e",
+      "url": "https://archive.org/download/mame-roms-merged_/MAME%20ROMs%20%28merged%29/cosmica.zip"
     },
     "demoderb.zip": {
       "size": 119482,
@@ -92,8 +93,14 @@
       "sha1": "54275c9833e497f71f76ab239030cc386c863991"
     },
     "mrdo.zip": {
-      "size": 127724,
-      "sha1": "ec49b77ebac23490591123bf97cc28097cc8605f"
+      "size": 143015,
+      "sha1": "2db167b90595074c440ef03a458dee04ce5387a5",
+      "url": "https://archive.org/download/mame-roms-merged_/MAME%20ROMs%20%28merged%29/mrdo.zip"
+    },
+    "mrsdyna.zip": {
+      "size": 28516,
+      "sha1": "2fb50a7474e6d273049f9398c1db124e8eaadbf0",
+      "url": "https://archive.org/download/mame-roms-merged_/MAME%20ROMs%20%28merged%29/mrsdyna.zip"
     },
     "nomnlnd.zip": {
       "size": 22261,
@@ -163,5 +170,6 @@
       "size": 24062,
       "sha1": "5c052dfcf7728dcd73638aae73d421ef5b6d480e"
     }
-  }
+  },
+  "additional_item": "mame-roms-merged_"
 }

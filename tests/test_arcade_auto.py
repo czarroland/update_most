@@ -28,7 +28,7 @@ class TestArcadeAuto(unittest.TestCase):
             archive.writestr("chips/original.bin", chip)
         self.source = buf.getvalue()
         self.recipe = {"system": "universal", "key": "demo", "size": len(self.image),
-                       "crc32": f"{zlib.crc32(self.image):08x}", "archive209_verified": True,
+                       "crc32": f"{zlib.crc32(self.image):08x}", "archive_verified": True,
                        "zips": ["demo.zip"], "parts": [
                            {"name": "original.bin", "crc": f"{zlib.crc32(chip):08x}",
                             "size": len(chip), "offset": 0, "length": len(chip), "repeat": 1},
@@ -67,6 +67,19 @@ class TestArcadeAuto(unittest.TestCase):
         self.assertEqual(a.prepare("universal", self.sd, lambda *_: b"bad",
                                    u.import_arcade_images, data_dir=self.data_dir), (0, 0, 1))
         self.assertFalse((self.sd / "roms").exists())
+
+    def test_pinned_second_collection_url(self):
+        source = a.catalogs(self.data_dir)[1]
+        source["files"]["demo.zip"]["url"] = "https://archive.org/download/second/demo.zip"
+        requested = []
+        def fetch(url, limit, hosts):
+            requested.append(url)
+            return self.source
+        self.assertEqual(a.source_zip("demo.zip", source, fetch), self.source)
+        self.assertEqual(requested, ["https://archive.org/download/second/demo.zip"])
+        source["files"]["demo.zip"]["url"] = "https://example.org/demo.zip"
+        with self.assertRaisesRegex(a.ArcadeError, "Archive.org HTTPS"):
+            a.source_zip("demo.zip", source, fetch)
 
     def test_rejects_missing_chip_and_modified_existing_image(self):
         with self.assertRaisesRegex(a.ArcadeError, "Missing chip"):

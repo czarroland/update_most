@@ -40,7 +40,10 @@ def source_zip(name: str, source: dict, fetcher) -> bytes:
     size = entry["size"]
     if not isinstance(size, int) or not 0 < size <= 8 * 1024 * 1024:
         raise ArcadeError("Archived ZIP exceeds the source limit")
-    data = fetcher(source["base_url"] + name, size + 1, {"archive.org"})
+    url = entry.get("url", source["base_url"] + name)
+    if not url.startswith("https://archive.org/download/"):
+        raise ArcadeError("Archived ZIP URL must use Archive.org HTTPS downloads")
+    data = fetcher(url, size + 1, {"archive.org"})
     if len(data) != size or hashlib.sha1(data).hexdigest() != entry["sha1"]:
         raise ArcadeError("Archived ZIP size or SHA-1 mismatch: " + name)
     return data
@@ -106,9 +109,9 @@ def prepare(system: str, sd: Path, fetcher, importer, dry_run: bool = False,
                (game_key is None or r["key"] == game_key)]
     if not recipes:
         raise ArcadeError("No arcade recipe matches the selected game")
-    recipes = [r for r in recipes if r.get("archive209_verified")]
+    recipes = [r for r in recipes if r.get("archive_verified")]
     if not recipes:
-        raise ArcadeError("Selected game has no checksum-verified source in the pinned Archive.org collection")
+        raise ArcadeError("Selected game has no checksum-verified source in the pinned Archive.org collections")
     folder = "MCR" if system == "mcr" else "Universal"
     pending = []
     current = 0
