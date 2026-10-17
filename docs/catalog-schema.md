@@ -51,7 +51,7 @@ BIOS requirements have their own `bios` array and paths. Some entries reference 
 
 The application loader continues to accept historical `schema: 1` catalogs without a `catalog_revision` field for backward compatibility. New community catalog contributions must set `catalog_revision` to a positive integer; increment it when publishing revised source listings or other reviewable metadata. A revision bump does not independently update the Python client or authorize new source repositories. Do not repurpose core IDs or change required install paths silently. Any incompatible schema change needs a new parser schema, explicit migration tests, and updated tooling.
 
-Do not silently modify the `schema` number, core IDs, or update state conventions. New catalog/database formats require migration code, tests and a versioning document. Multiple independent databases are planned, not implemented.
+Do not silently modify the `schema` number, core IDs, or update state conventions. New catalog/database formats require migration code, tests and a versioning document. Additional schema-1 databases may be selected with `--database`; each needs a permanent `database_id` matching the same identifier rules as core IDs. A database cannot override a core ID, BIOS ID, or BIOS destination from another selected database. Database sources are selected by the user and are not signed.
 
 ## AI and license disclosure
 

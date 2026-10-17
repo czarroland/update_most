@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "item": "MAME209RomsOnlyMerged",
+  "base_url": "https://archive.org/download/MAME209RomsOnlyMerged/",
+  "files": {
+    "cavenger.zip": {
+      "size": 21980,
+      "sha1": "b1d08f3d617724add779630224abd4bb99088c64"
+    },
+    "cheekyms.zip": {
+      "size": 10608,
+      "sha1": "ee1fc4db4d6c4a32c11e311534a6235f1769af69"
+    },
+    "cosmica.zip": {
+      "size": 45720,
+      "sha1": "8c184fa2bfe885f1dd5b2831d715cbd1bcba6e1e",
+      "url": "https://archive.org/download/mame-roms-merged_/MAME%20ROMs%20%28merged%29/cosmica.zip"
+    },
+    "demoderb.zip": {
+      "size": 119482,
+      "sha1": "5af2fa126240a59aeb80983dde84bf498b1aeed0"
+    },
+    "devzone.zip": {
+      "size": 23802,
+      "sha1": "d921db54b2c83e3e3908b7b3acb7a50eee716f01"
+    },
+    "docastle.zip": {
+      "size": 108719,
+      "sha1": "10431e063057d1fee95980070e0ae1ec7059045c"
+    },
+    "domino.zip": {
+      "size": 40571,
+      "sha1": "7250095ac1084dd302a8987720db8aae299df278"
+    },
+    "dorodon.zip": {
+      "size": 45863,
+      "sha1": "6436f47965e699df25f38c274a0218c6ef0f3b99"
+    },
+    "dorunrun.zip": {
+      "size": 163160,
+      "sha1": "6e3b9681f2b7849a2026859a9589651d0669f853"
+    },
+    "dotron.zip": {
+      "size": 165657,
+      "sha1": "f81ce1391450096361e410ff4e9d01ca5f1bf718"
+    },
+    "dowild.zip": {
+      "size": 43654,
+      "sha1": "89db8f372920e5eb1404cdf5ce12347c5738affc"
+    },
+    "idsoccer.zip": {
+      "size": 192547,
+      "sha1": "ceb777611bcc7416a7b68349f98fffc5dbdbeded"
+    },
+    "jjack.zip": {
+      "size": 44209,
+      "sha1": "64a6b1234606aedbfabf868d7c677c86d01aba2d"
+    },
+    "journey.zip": {
+      "size": 67946,
+      "sha1": "9c984f93caab11620ffbaab54ed56db6b67cbea7"
+    },
+    "kick.zip": {
+      "size": 79626,
+      "sha1": "d74bfd1b76c7a7447da0af8c50b8c9910eea3085"
+    },
+    "kickridr.zip": {
+      "size": 37835,
+      "sha1": "4262199a05e0e957af2810c849a13d7a48245459"
+    },
+    "kroozr.zip": {
+      "size": 45549,
+      "sha1": "c1debd467c6de57ccca17885281a93048b7b89b6"
+    },
+    "ladybug.zip": {
+      "size": 65565,
+      "sha1": "edce7cdd183d1a86f22bf6d94d179165314dde23"
+    },
+    "magspot.zip": {
+      "size": 12104,
+      "sha1": "9c5e824c12dee09aa83ba393806d976243585903"
+    },
+    "magspot2.zip": {
+      "size": 12486,
+      "sha1": "e917f43577044f09b283b974026533c61e853025"
+    },
+    "maxrpm.zip": {
+      "size": 87769,
+      "sha1": "f74d68873d91dae1f04642a8cd0a666f2c64e723"
+    },
+    "midssio.zip": {
+      "size": 163,
+      "sha1": "54275c9833e497f71f76ab239030cc386c863991"
+    },
+    "mrdo.zip": {
+      "size": 143015,
+      "sha1": "2db167b90595074c440ef03a458dee04ce5387a5",
+      "url": "https://archive.org/download/mame-roms-merged_/MAME%20ROMs%20%28merged%29/mrdo.zip"
+    },
+    "mrsdyna.zip": {
+      "size": 28516,
+      "sha1": "2fb50a7474e6d273049f9398c1db124e8eaadbf0",
+      "url": "https://archive.org/download/mame-roms-merged_/MAME%20ROMs%20%28merged%29/mrsdyna.zip"
+    },
+    "nomnlnd.zip": {
+      "size": 22261,
+      "sha1": "27d58f7a4a26cdc1ceb7ca8622674704e8a029cb"
+    },
+    "panic.zip": {
+      "size": 49968,
+      "sha1": "10557967aa552f6da32f35adb67e04e3a4faa854"
+    },
+    "powerdrv.zip": {
+      "size": 195303,
+      "sha1": "920e6445a6d7f437da4cd1d1ca52d69bc7a367c7"
+    },
+    "rampage.zip": {
+      "size": 294845,
+      "sha1": "edd84b3645bd954071a762c03a3365b4ec63a7e0"
+    },
+    "redclash.zip": {
+      "size": 35029,
+      "sha1": "b4ba663fcd12b0db4035a616a2db6cc32f3cec47"
+    },
+    "sarge.zip": {
+      "size": 84020,
+      "sha1": "68d891cc01d5be32931f167816d040217b6924ed"
+    },
+    "shollow.zip": {
+      "size": 51971,
+      "sha1": "78a59d250abd73ac00d1abf1efa92c94a8080ed6"
+    },
+    "snapjack.zip": {
+      "size": 24812,
+      "sha1": "0476b4e34a0ae46e0ec206e4f847713d0d4be0c7"
+    },
+    "solarfox.zip": {
+      "size": 34706,
+      "sha1": "37bcad7af4104b8b937254358e2cda2f8ec593ec"
+    },
+    "sraider.zip": {
+      "size": 28366,
+      "sha1": "cfb48db6301c77d0ccbbb7d4f5dc132c7154f96d"
+    },
+    "stargrds.zip": {
+      "size": 133468,
+      "sha1": "053aa8655f2caa877f54d39eb7916a15c9a23f7c"
+    },
+    "tapper.zip": {
+      "size": 353500,
+      "sha1": "a626831df8d7f5ff5e8ffd7ade8987d0c9c50146"
+    },
+    "timber.zip": {
+      "size": 85901,
+      "sha1": "71ac764f61f2cdc65539746f4d2e64ef94e46450"
+    },
+    "tron.zip": {
+      "size": 145454,
+      "sha1": "cb52aa403a24e8f758b4ced96a6ebb6271a78ee6"
+    },
+    "twotiger.zip": {
+      "size": 77234,
+      "sha1": "1d62aa12204d0c2b6d256a7db28b84ccdbcdb6d0"
+    },
+    "wacko.zip": {
+      "size": 40532,
+      "sha1": "1f88cead45f92d8cbba548106f7abeb0cfcfcfae"
+    },
+    "zerohour.zip": {
+      "size": 24062,
+      "sha1": "5c052dfcf7728dcd73638aae73d421ef5b6d480e"
+    }
+  },
+  "additional_item": "mame-roms-merged_"
+}

@@ -6,6 +6,7 @@ Fixtures reconstruct the relevant required fields from a user-provided MCR
 files.json and published v0.6.0 core.json. No copyrighted PROM or game data.
 """
 import copy
+import hashlib
 import io
 import json
 import tempfile
@@ -57,9 +58,27 @@ class TestArcadeMCRProm(unittest.TestCase):
         self.assertEqual(self.item["sha256"],
             "4962a47f67ce0cebc655026efed495eb17fc29e7072650ecab2cecc4f16c06dc")
         self.assertEqual(self.item["destination"],"cores/alanswx.MCR/ssio.prom")
-        self.assertEqual(self.item["redistribution"],"user_supplied")
-        self.assertNotIn("source",self.item)
+        self.assertEqual(self.item["redistribution"],"community_unverified")
+        self.assertEqual(self.item["source"]["type"],"archive_mame_zip")
+        self.assertEqual(self.item["source"]["archive_member"],"82s123.12d")
         self.assertEqual(self.check(),"cores/alanswx.MCR/ssio.prom")
+
+    def test_prom_fetched_during_bios_step(self):
+        blob = b"p" * 32
+        archive = io.BytesIO()
+        import zipfile
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("82s123.12d", blob)
+        item = copy.deepcopy(self.item)
+        item["sha256"] = hashlib.sha256(blob).hexdigest()
+        item["source"]["sha256"] = hashlib.sha256(archive.getvalue()).hexdigest()
+        output = io.StringIO()
+        with redirect_stdout(output):
+            result = u.manage_bios(self.sd, {"bios": [item]}, None, False,
+                                   fetcher=lambda *_: archive.getvalue())
+        self.assertEqual(result, (1, 0, 0))
+        self.assertEqual((self.root / "ssio.prom").read_bytes(), blob)
+        self.assertNotIn("MISSING REQUIRED", output.getvalue())
 
     def test_mcr_game_image_is_manual_and_not_prom(self):
         mcr = next(c for c in self.catalog["cores"] if c["id"]=="alanswx.MCR")

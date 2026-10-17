@@ -1,0 +1,623 @@
+{
+  "schema": 1,
+  "sources": {
+    "mcr": {
+      "repo": "alanswx/MCR_GameBub",
+      "commit": "a47b413b533e750978761d52efa4fdf4c278e2cb"
+    },
+    "universal": {
+      "repo": "alanswx/Universal_GameBub",
+      "commit": "d76c093bf77ecaa49ea54657d71cdc31a22797fd"
+    }
+  },
+  "images": [
+    {
+      "system": "mcr",
+      "key": "dotron",
+      "filename": "Discs of Tron.rom",
+      "size": 237568,
+      "sha256": null,
+      "md5": "e05333f8e3385387b336252269e64e45"
+    },
+    {
+      "system": "mcr",
+      "key": "dotrone",
+      "filename": "Discs of Tron (Environmental).rom",
+      "size": 253952,
+      "sha256": null,
+      "md5": "979cb63d85f917cdae2179c515111a24"
+    },
+    {
+      "system": "mcr",
+      "key": "journey",
+      "filename": "Journey.rom",
+      "size": 237568,
+      "sha256": null,
+      "md5": "95d0859c7922308b094486d0d624c727"
+    },
+    {
+      "system": "mcr",
+      "key": "tapper",
+      "filename": "Tapper.rom",
+      "size": 237568,
+      "sha256": null,
+      "md5": "7300967c61a0f1b887c12f3989e500bb"
+    },
+    {
+      "system": "mcr",
+      "key": "timber",
+      "filename": "Timber.rom",
+      "size": 237568,
+      "sha256": null,
+      "md5": "87b3b4c330d79006b148d182885107b2"
+    },
+    {
+      "system": "mcr",
+      "key": "domino",
+      "filename": "Domino Man.rom",
+      "size": 114688,
+      "sha256": null,
+      "md5": "112359d5a207884821f6df0f0c1c4d2c"
+    },
+    {
+      "system": "mcr",
+      "key": "kroozr",
+      "filename": "Kozmik Krooz'r.rom",
+      "size": 114688,
+      "sha256": null,
+      "md5": "0435ff192c0b93107af54d69d7eaf48f"
+    },
+    {
+      "system": "mcr",
+      "key": "shollow",
+      "filename": "Satan's Hollow.rom",
+      "size": 114688,
+      "sha256": null,
+      "md5": "cc2c7141ad992cffa1bd34ee74952152"
+    },
+    {
+      "system": "mcr",
+      "key": "tron",
+      "filename": "Tron.rom",
+      "size": 114688,
+      "sha256": null,
+      "md5": "8b232b334aa20263ab1c3a77796f8885"
+    },
+    {
+      "system": "mcr",
+      "key": "twotiger",
+      "filename": "Two Tigers.rom",
+      "size": 114688,
+      "sha256": null,
+      "md5": "fa00775a4b4c94b464bb402b3aa2c1be"
+    },
+    {
+      "system": "mcr",
+      "key": "wacko",
+      "filename": "Wacko.rom",
+      "size": 114688,
+      "sha256": null,
+      "md5": "157209d82b536114e346517818a89184"
+    },
+    {
+      "system": "mcr",
+      "key": "kick",
+      "filename": "Kick.rom",
+      "size": 106496,
+      "sha256": null,
+      "md5": "3759c22c8a392d0ce7f6f9783f71df1b"
+    },
+    {
+      "system": "mcr",
+      "key": "solarfox",
+      "filename": "Solar Fox.rom",
+      "size": 106496,
+      "sha256": null,
+      "md5": "de188e839c36555915dcfac0b4e406a9"
+    },
+    {
+      "system": "mcr",
+      "key": "demoderm",
+      "filename": "Demolition Derby.rom",
+      "size": 294912,
+      "sha256": null,
+      "md5": "aff76437b13ecd375e3c5cb407bec5a9"
+    },
+    {
+      "system": "mcr",
+      "key": "maxrpm",
+      "filename": "Max RPM.rom",
+      "size": 294912,
+      "sha256": null,
+      "md5": "7479a399b89fb067686ca8983a4eabb9"
+    },
+    {
+      "system": "mcr",
+      "key": "powerdrv",
+      "filename": "Power Drive.rom",
+      "size": 524288,
+      "sha256": null,
+      "md5": "c50d6870f88537f1f2a1e45c2a2f8450"
+    },
+    {
+      "system": "mcr",
+      "key": "rampage",
+      "filename": "Rampage.rom",
+      "size": 524288,
+      "sha256": null,
+      "md5": "d5e60e119063e4dbd09c79b8edf3c0b9"
+    },
+    {
+      "system": "mcr",
+      "key": "sarge",
+      "filename": "Sarge.rom",
+      "size": 294912,
+      "sha256": null,
+      "md5": "f4957f2d6fef5e2264dac930678a4e84"
+    },
+    {
+      "system": "mcr",
+      "key": "stargrds",
+      "filename": "Star Guards.rom",
+      "size": 524288,
+      "sha256": null,
+      "md5": "14a8079eb9f3ccc0a37c11842d17bd96"
+    },
+    {
+      "system": "universal",
+      "key": "ladybug",
+      "filename": "Lady Bug.rom",
+      "size": 49248,
+      "sha256": "1f537ada7b9bc68fb82de77aa23381b26b37f79a0b70cfcd4e3cbccfeb0b41f5",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "asoccer",
+      "filename": "American Soccer (Japan).rom",
+      "size": 393216,
+      "sha256": "f4b55ca9e91231c32be03e7ab00e04af0f77898495f81a65fc9b124b2b43ec39",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cavenger",
+      "filename": "Cosmic Avenger.rom",
+      "size": 49248,
+      "sha256": "1f693bc575079b6c345b186f4eedb3ca096da02661d0b7e76d3fb27b40e5dea2",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cheekyms",
+      "filename": "Cheeky Mouse.rom",
+      "size": 49248,
+      "sha256": "434b93c37d4737d58181d14d63575ea235e8c492d73f2cc3d9b0b5bd3729e16b",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cosmica",
+      "filename": "Cosmic Alien.rom",
+      "size": 49184,
+      "sha256": "d2f4032e4e6a93b5f0648e696a8618a35f1ce54a0cf9afea6a0962aa9777d7f3",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cosmica1",
+      "filename": "Cosmic Alien (First Version).rom",
+      "size": 49184,
+      "sha256": "b04e5ca49c75e1efed0a34a3b2be65e8b77acb08a6483a66d4b02a7e9472ee16",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cosmica22",
+      "filename": "Cosmic Alien (Version II, Set 2).rom",
+      "size": 49184,
+      "sha256": "4bf59c44c2d970fad3d9ca386375d8ef1439686fba3c6d431a6b9633084d6a60",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cosmica23",
+      "filename": "Cosmic Alien (Version II, Set 3).rom",
+      "size": 49184,
+      "sha256": "40fa6673fd5d3b4dbafa41c0f08e6d7bb66691a1fe9a2f91b170ed1392a666a1",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "cosmica2a",
+      "filename": "Cosmic Alien (Early Version II-).rom",
+      "size": 49184,
+      "sha256": "8c9bd7c029c2f0d55e441fa2844091c6c4b24e49b6efda8369d897bc841b915d",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "devzone",
+      "filename": "Devil Zone.rom",
+      "size": 49248,
+      "sha256": "fe0bbc7558740cacbf394b8d37fcd6b47f55b258d37d74dea1157c91b1b00ec3",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "devzone2",
+      "filename": "Devil Zone (Easier).rom",
+      "size": 49248,
+      "sha256": "a969dc6c41cff5f0007d2dcf2adba0b4f2f224c72c177c5ba971aff97e9b522c",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "docastle",
+      "filename": "Mr. Do's Castle.rom",
+      "size": 294912,
+      "sha256": "6424db739c88ae7854dfaddf2cda1e85dbda520e00c6a775ef9b0b70d4a75b65",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "docastle2",
+      "filename": "Mr. Do's Castle (Set 2).rom",
+      "size": 294912,
+      "sha256": "b669d3b99c7a052ee24e4071e612596786eae235f81969299a3b7048da75e32f",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "docastleo",
+      "filename": "Mr. Do's Castle (Older).rom",
+      "size": 294912,
+      "sha256": "5fd7141e67b1b1659c0cb4e94e5c2fe796e031bb2543a2d38d44b183c5cb51cc",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dorodon",
+      "filename": "Dorodon.rom",
+      "size": 49920,
+      "sha256": "dc21cfa1c2f24d92d748de15e1d6c5b0edbc230b727f6a8cc23f4e50faaae581",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dorodon2",
+      "filename": "Dorodon (Set 2).rom",
+      "size": 49920,
+      "sha256": "14ccad43aa5109066c6787f16edd1ca0d776ef0110972c35c0e336ad864d8be3",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dorunrun",
+      "filename": "Do! Run Run.rom",
+      "size": 294912,
+      "sha256": "caa926ba22f9d0a73ca61103d89bbf32124c8135d2a9eaddefde8b79da373783",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dorunrun2",
+      "filename": "Do! Run Run (Set 2).rom",
+      "size": 294912,
+      "sha256": "5b0b850212d7e7285812e816da125c34ccd49f181b7dee8602869731b9949138",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dorunrunc",
+      "filename": "Do! Run Run (Do's Castle Hardware, Set 1).rom",
+      "size": 294912,
+      "sha256": "aa4de8e7222a81283169d66a6dccf842a1c30feabbfea326525987ec43649665",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dorunrunca",
+      "filename": "Do! Run Run (Do's Castle Hardware, Set 2).rom",
+      "size": 294912,
+      "sha256": "2dcbc6ea062d52f4a956d2b31b1b5917818cc383d8c3358dc5bbbb1bfc092ecf",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "douni",
+      "filename": "Mr. Do! Vs. Unicorns (Japan).rom",
+      "size": 294912,
+      "sha256": "b3927da84d9b05855d39ec8790adc8f04dc100f99044738aa798cfbb6fe1f129",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "dowild",
+      "filename": "Mr. Do's Wild Ride.rom",
+      "size": 294912,
+      "sha256": "f90535170e8e70540883763a401ca960db3f0ed48e74b68f19624210a5ad1640",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "idsoccer",
+      "filename": "Indoor Soccer.rom",
+      "size": 393216,
+      "sha256": "d2d7bcc9f8d54f1963e7f2fcd18f329490f86d131f6547a4f83a49cd0bb808aa",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "idsoccera",
+      "filename": "Indoor Soccer (Set 2).rom",
+      "size": 393216,
+      "sha256": "ef7bd299ed27b3ead299c6c1288285481b480ad45dd859e8618f1fa8d82dc971",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "jjack",
+      "filename": "Jumping Jack.rom",
+      "size": 294912,
+      "sha256": "9896acb141fa470cba9c1bb12f3d6812dab7c634eb66dc0e83e69cc594baad43",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "kickridr",
+      "filename": "Kick Rider.rom",
+      "size": 294912,
+      "sha256": "ccdaa274e0a5617819df5a21e2895097d448f4ead827a4fff07a74aae65b538b",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "ladybugb",
+      "filename": "Lady Bug (Bootleg).rom",
+      "size": 49248,
+      "sha256": "55c66bcc09c31f6809d0a239b51aeec7db73ed397e9be03d8a93ecfd22d49d61",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "ladybugb2",
+      "filename": "Coccinelle (Bootleg Of Lady Bug).rom",
+      "size": 49248,
+      "sha256": "9ef2e628ce1fd53a39950208d7041ff27af2e67b497ee35a7b63bed97cf8ffac",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "magspot",
+      "filename": "Magical Spot.rom",
+      "size": 49184,
+      "sha256": "7fb6d82b7741447dd256a3b9c3063022cd2b2cb1b35b61365b62966cd8da3a1e",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "magspot2",
+      "filename": "Magical Spot II.rom",
+      "size": 49184,
+      "sha256": "644d275637581206300f646c2c04abd9eca798d66ed1d51350b99ce847fe36c1",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdo",
+      "filename": "Mr. Do!.rom",
+      "size": 106496,
+      "sha256": "d3d477a9014aeb681ad5ca596749e3bc679967254a26a5f97ba35e3cb841b66e",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdobl",
+      "filename": "Mr. Do! (Bootleg).rom",
+      "size": 106496,
+      "sha256": "ed936a5777e033b5bd58999dde3f83be8d7babe1114aae8e0adfb757875420f2",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdofabr",
+      "filename": "Mr. Do! (Fabremar Bootleg).rom",
+      "size": 106496,
+      "sha256": "d0fcd4cdcde6ac3712dcf16575340aab070008db5c9b31370c45550c16cec610",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdofix",
+      "filename": "Mr. Do! (Bugfixed).rom",
+      "size": 106496,
+      "sha256": "dede55f78e33df3840cf13366ade5fc38e88f2a5dbe9c51c94a7897ff17e9239",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdot",
+      "filename": "Mr. Do! (Taito).rom",
+      "size": 106496,
+      "sha256": "3e00d2b97eac9e377451f87242a43cd80cdc81763959e2eedb071e963cdbbc74",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdoy",
+      "filename": "Mr. Do! (Prototype).rom",
+      "size": 106496,
+      "sha256": "9268211d20f3e059d9d2ee2f78461c576b9f80ed19be08e74623546542c6e657",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrdu",
+      "filename": "Mr. Du!.rom",
+      "size": 106496,
+      "sha256": "167967aca6f5dab968dcee6ed4b48df4495db2b193052fb7d8e3597d1c9562e7",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrlo",
+      "filename": "Mr. Lo!.rom",
+      "size": 106496,
+      "sha256": "62a977286236a843385c21fc4c67bbfe6efc13d837785b02c8526f9e644554f1",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "mrsdyna",
+      "filename": "Mrs. Dynamite.rom",
+      "size": 90112,
+      "sha256": "c6a4ef470f8dbc40f31a5332fad9b790c5c00b595d63131e57b93b11e143928e",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "nomnlnd",
+      "filename": "Sengoku No Jieitai.rom",
+      "size": 49184,
+      "sha256": "7e6fb9331aa6e30833d1f608c9b771041cceb4a6f52a3ebb3709d93eb6acf8c2",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "nomnlndg",
+      "filename": "No Man's Land (Gottlieb).rom",
+      "size": 49184,
+      "sha256": "00c23d866b4de1640c68a32bef90e4df602c607fe42a7373cb1bc6d8218c7429",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "panic",
+      "filename": "Space Panic.rom",
+      "size": 49184,
+      "sha256": "4898af31a9dc2006cc8521dbdc213a14f358ef6b8c1ab26b053f576e9ff1c100",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "panic2",
+      "filename": "Space Panic (Set 2).rom",
+      "size": 49184,
+      "sha256": "ca9fabc946866965d3668e9a0697f5580ada1de47a779cc117800687603b8c18",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "panic3",
+      "filename": "Space Panic (Set 3).rom",
+      "size": 49184,
+      "sha256": "43930a06578bad22e89ac5bd984ed7f17dc79998112e5ff85dbad7ddaeffd99d",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "panicger",
+      "filename": "Space Panic (German).rom",
+      "size": 49184,
+      "sha256": "1002a45d57d3cf1ac6613bee02a52a46a743c243ce8894497689aae0834aaf63",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "panich",
+      "filename": "Space Panic (Harder).rom",
+      "size": 49184,
+      "sha256": "17e9e5b339d2b0e6be53a8dce78109121fd99a5364d5cba83812aea55f1698f9",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "redclash",
+      "filename": "Red Clash.rom",
+      "size": 270336,
+      "sha256": "5b97500cdf1336d3f8b89b1a056dd9e3edd874a3c1bbdcb51263b84e0c21ebdf",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "redclashs",
+      "filename": "Red Clash (Suntronics).rom",
+      "size": 270336,
+      "sha256": "d5557a4abc85aa4e18b8b2d9f54e7634cc98e9a9ef44d93d0d885fb6a9610e35",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "redclasht",
+      "filename": "Red Clash (Tehkan, Set 1).rom",
+      "size": 270336,
+      "sha256": "76cfab82402d60827488ca5514331344bd23490177918f4a0fedfaa82770e769",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "redclashta",
+      "filename": "Red Clash (Tehkan, Set 2).rom",
+      "size": 270336,
+      "sha256": "b5c86268bcdfcd0a14191a99a35b790b71ff822a5a870b2311a5f05c206b3111",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "snapjack",
+      "filename": "Snap Jack.rom",
+      "size": 49248,
+      "sha256": "7430cbfd8bd43e89236b162772527fc6883e5a40567a11a4f1213b425b4dffae",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "spiero",
+      "filename": "Super Pierrot (Japan).rom",
+      "size": 294912,
+      "sha256": "aa6a82021c8977729b90ccb161f990bf79f3cf9cf6714adfcb4d5f380f287bbf",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "sraider",
+      "filename": "Space Raider.rom",
+      "size": 102400,
+      "sha256": "2a157ba9486d4b819f6fa18f6f30c9006259c7a886ef3d069d06bf5ae354e494",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "yankeedo",
+      "filename": "Yankee DO!.rom",
+      "size": 106496,
+      "sha256": "f03e39d3d4508ba6add133883c44f7a4ff67aa522d648903f37e49380dd02810",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "zerohour",
+      "filename": "Zero Hour.rom",
+      "size": 266240,
+      "sha256": "327507ed3419377b6144876250f84765e5570ac5880d0274950d8aff2f031412",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "zerohoura",
+      "filename": "Zero Hour (Set 2).rom",
+      "size": 266240,
+      "sha256": "52bcb3f51124b1ff4acdfb5434ea6e947b593f3a1b5811bf475f58a3a9ec764d",
+      "md5": null
+    },
+    {
+      "system": "universal",
+      "key": "zerohouri",
+      "filename": "Zero Hour (Bootleg).rom",
+      "size": 266240,
+      "sha256": "948e58d934d3dc537bf45ffc8fe863c181df61035f9b05c560bf6ea09c80f0c5",
+      "md5": null
+    }
+  ]
+}
