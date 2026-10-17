@@ -928,6 +928,20 @@ def validate_bios_catalog(doc: dict):
                         raise UpdaterError("archive_member only applies to ZIP URLs")
                 elif urllib.parse.urlparse(src["url"]).path.lower().endswith(".zip"):
                     raise UpdaterError("ZIP BIOS source requires archive_member")
+            elif src.get("type") == "archive_mame_zip":
+                if item.get("redistribution") != "community_unverified":
+                    raise UpdaterError("Archive.org BIOS sources require community_unverified status")
+                if set(src) != {"type", "url", "sha256", "archive_member"}:
+                    raise UpdaterError("Archive.org BIOS source requires exact URL, SHA-256, and member")
+                url = src["url"]
+                https_url(url, {"archive.org"})
+                if not url.startswith("https://archive.org/download/") or not urllib.parse.urlparse(url).path.lower().endswith(".zip"):
+                    raise UpdaterError("Archive.org BIOS source must be a direct ZIP download")
+                if not SHA_RE.fullmatch(str(src["sha256"])) or not SHA_RE.fullmatch(str(item.get("sha256", ""))):
+                    raise UpdaterError("Archive.org BIOS source and extracted ROM need pinned SHA-256 hashes")
+                member = src["archive_member"]
+                if not isinstance(member, str) or member.endswith("/") or not normalize_zip_path(member).parts:
+                    raise UpdaterError("Invalid Archive.org BIOS ZIP member")
             else:
                 raise UpdaterError("Unsupported BIOS source type")
         aliases = item.get("aliases", [])
@@ -1630,6 +1644,15 @@ def acquire_bios(item: dict, directory: Path | None, fetcher=fetch,
         if not bios_content_valid(data, item):
             raise UpdaterError("Downloaded MiSTer BIOS size/MD5 mismatch; rejected")
         return data, "MiSTer BIOS database (MD5 and length verified)"
+    if src and src["type"] == "archive_mame_zip":
+        print(f"  Fetch Archive.org MAME BIOS: {src['url']}")
+        data = fetcher(src["url"], MAX_DOWNLOAD, {"archive.org"})
+        if sha256(data) != src["sha256"].lower():
+            raise UpdaterError("Archive.org BIOS ZIP SHA-256 mismatch")
+        blob = unpack_bios_asset(data, src)
+        if not bios_content_valid(blob, item):
+            raise UpdaterError("Archive.org BIOS ROM size or SHA-256 mismatch")
+        return blob, "Archive.org MAME ZIP (source and ROM SHA-256 verified)"
     if src:
         print(f"  Fetch authorized BIOS: {src['url']}")
         data = fetcher(src["url"], MAX_DOWNLOAD)
@@ -1966,6 +1989,7 @@ def main(argv=None):
         for b in catalog.get("bios", []):
             src = b.get("source", {})
             origin = ("MiSTer community DB (auto, --no-mister-bios disables)" if src.get("type") == "mister_bios_db"
+                      else "Archive.org MAME ZIP (pinned)" if src.get("type") == "archive_mame_zip"
                       else "approved HTTPS" if src else "user-supplied")
             target = b.get("target_core")
             extra = f" | auto-targets {target['id']} when files.json confirms {target['filename']}" if target else ""

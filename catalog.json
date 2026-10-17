@@ -294,8 +294,14 @@
         "colecovision.rom",
         "os7.u2"
       ],
-      "redistribution": "user_supplied",
-      "help": "Use your legally obtained 8 KiB ColecoVision OS-7 ROM."
+      "redistribution": "community_unverified",
+      "sha256": "990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad",
+      "source": {
+        "type": "archive_mame_zip",
+        "url": "https://archive.org/download/MAME209RomsOnlyMerged/coleco.zip",
+        "sha256": "bd8d63a7b6df8df034e37935f17be4605a49aa55ebe466573e1a8008247dd1fb",
+        "archive_member": "313 10031-4005 73108a.u2"
+      }
     },
     {
       "id": "apple-iigs-rom01",
@@ -347,7 +353,14 @@
         "boot0.rom"
       ],
       "required": true,
-      "redistribution": "user_supplied"
+      "redistribution": "community_unverified",
+      "sha256": "129391cc72f84c2b321709cad8281e30a45e50b3cf6e7afe7434c4d32c7b9d5b",
+      "source": {
+        "type": "archive_mame_zip",
+        "url": "https://archive.org/download/MAME209RomsOnlyMerged/maclc.zip",
+        "sha256": "e16b7756eeb0318ad4ae80f791155bd60a82931f3f8ab0d63548c2e03dee94da",
+        "archive_member": "350eacf0.rom"
+      }
     },
     {
       "id": "mcr-ssio-prom",

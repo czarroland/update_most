@@ -44,6 +44,31 @@ class TestBios(unittest.TestCase):
         with self.assertRaisesRegex(u.UpdaterError, 'inside'):
             u.validate_bios_catalog(self.cat([bad]))
 
+    def test_archive_mame_bios_needs_pinned_source_and_extracted_hash(self):
+        rom = b"eightbit"
+        archive = io.BytesIO()
+        with zipfile.ZipFile(archive, "w") as bundle:
+            bundle.writestr("rom.bin", rom)
+        data = archive.getvalue()
+        item = dict(self.item, redistribution="community_unverified",
+                    sha256=hashlib.sha256(rom).hexdigest(),
+                    source={"type": "archive_mame_zip",
+                            "url": "https://archive.org/download/test/firmware.zip",
+                            "sha256": hashlib.sha256(data).hexdigest(),
+                            "archive_member": "rom.bin"})
+        u.validate_bios_catalog(self.cat([item]))
+        calls = []
+        def fetch(url, limit, hosts):
+            calls.append((url, hosts))
+            return data
+        self.assertEqual(u.acquire_bios(item, None, fetcher=fetch)[0], rom)
+        self.assertEqual(calls, [(item["source"]["url"], {"archive.org"})])
+        with self.assertRaisesRegex(u.UpdaterError, "ZIP SHA-256"):
+            u.acquire_bios(item, None, fetcher=lambda *_: b"bad")
+        bad = dict(item, source=dict(item["source"], url="https://example.org/firmware.zip"))
+        with self.assertRaisesRegex(u.UpdaterError, "download host"):
+            u.validate_bios_catalog(self.cat([bad]))
+
     def test_remote_license_and_sha_required(self):
         entry = dict(self.item, source=dict(type='url', url='https://example.org/test.bin', sha256='e'*64))
         with self.assertRaisesRegex(u.UpdaterError, 'redistributable'):

@@ -13,7 +13,7 @@ Update_Most is an **unofficial, community-maintained Game Bub core updater**. It
 - Reads a JSON catalog of reviewed core release sources.
 - Downloads GitHub release ZIP archives, checks release SHA-256 values where available, and validates Game Bub core metadata and hardware targets.
 - Installs to `/cores/<core-id>/`, backs up managed files before replacement, and keeps a record of managed files.
-- Handles BIOS paths, user-supplied BIOS imports, and selected MiSTer community BIOS database entries.
+- Handles BIOS paths, local BIOS imports, selected MiSTer community BIOS database entries, and pinned Archive.org ColecoVision OS-7 and Macintosh LC ROMs.
 - Preserves unrelated saves and ROM files. Does **not** format a card or flash the handheld firmware.
 - Allows a local catalog (default) or explicitly supplied HTTPS catalog.
 - Combines separately identified community databases with conflict checks; an interactive menu saves preferences on the selected card.
@@ -128,6 +128,8 @@ python3 update_most.py --sd /Volumes/GAMEBUB --no-mister-bios
 ```
 
 **BIOS source caution:** The existing v0.7 behavior fetches matching entries from the public MiSTer community BIOS URL index **by default**, when missing. Users can disable this with `--no-mister-bios` or skip BIOS handling with `--skip-bios`. The linked firmware images may be copyrighted; being listed in a public index is **not** a grant of permission to download or redistribute them. The per-source authorization and safe default policy are under review in [issue #2](https://github.com/czarroland/update_most/issues/2). The repository includes **no BIOS or commercial game image bytes**.
+
+ColecoVision OS-7 and Macintosh LC ROMs now use pinned ZIP members from the Archive.org MAME 0.209 collection. The ZIP and extracted ROM both require exact SHA-256 matches before installation. The Mac LC ROM matches the [$67C / $350EACF0 revision documented by the core author](https://github.com/danifunker/MacLC_MiSTer#rom); the OS-7 ROM matches the [MAME ColecoVision driver](https://github.com/mamedev/mame/blob/master/src/mame/coleco/coleco.cpp). Existing differing BIOS files are preserved.
 
 ## Catalog and community contributions
 
