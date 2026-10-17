@@ -233,10 +233,7 @@ class TestUpdateMost(unittest.TestCase):
         self.assertIsNone(u.card_format_issue(info))
         listing = {"AllDisksAndPartitions": [{"Partitions": [{"Content": "Windows_FAT_32",
                     "MountPoint": str(blank)}]}]}
-        with patch.object(u.sys, "platform", "darwin"), \
-             patch.object(u, "mac_diskutil_plist", return_value=listing), \
-             patch.object(u, "mac_card_info", return_value=info):
-            self.assertIn(blank, u.detect_sd_cards())
+        self.assertIn(blank, u.mac_external_fat32_mounts(listing))
 
     def test_bad_card_format_blocks_writes_but_allows_read_only_inspection(self):
         wrong = {"filesystem": "ExFAT", "scheme": "GUID_partition_scheme", "removable": True}

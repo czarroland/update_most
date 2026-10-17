@@ -600,6 +600,13 @@ def card_format_issue(info: dict | None) -> str | None:
     return None
 
 
+def mac_external_fat32_mounts(disks: dict | None) -> list[Path]:
+    """Extract only mounted FAT32 partitions from diskutil's external list."""
+    return [Path(part["MountPoint"]) for disk in (disks or {}).get("AllDisksAndPartitions", [])
+            for part in disk.get("Partitions", []) if part.get("Content") == "Windows_FAT_32"
+            and isinstance(part.get("MountPoint"), str)]
+
+
 def detect_sd_cards() -> list[Path]:
     """Return plausible mounted cards; a person still chooses the destination."""
     roots = []
@@ -607,10 +614,7 @@ def detect_sd_cards() -> list[Path]:
         roots = [Path(f"{letter}:\\") for letter in "DEFGHIJKLMNOPQRSTUVWXYZ"]
     elif sys.platform == "darwin":
         disks = mac_diskutil_plist("list", "-plist", "external")
-        if disks:
-            roots = [Path(part["MountPoint"]) for disk in disks.get("AllDisksAndPartitions", [])
-                     for part in disk.get("Partitions", []) if part.get("Content") == "Windows_FAT_32"
-                     and isinstance(part.get("MountPoint"), str)]
+        roots = mac_external_fat32_mounts(disks)
         if not roots:
             roots = [child for child in Path("/Volumes").iterdir() if child.is_dir()]
     else:
